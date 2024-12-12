@@ -70,6 +70,14 @@
                     <option value="">Select a country</option>
                 </select>
             </div>
+            <div>
+                <label for="role" class="block text-sm font-medium text-white">Role</label>
+                <select id="role" name="role" required class="mt-1 block w-full px-3 py-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-white">
+                    <option value="">Select a role</option>
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
             <div class="relative">
                 <label for="password" class="block text-sm font-medium text-white">Password</label>
                 <input type="password" id="password" name="password" required placeholder="••••••••" class="mt-1 block w-full px-3 py-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-white placeholder-white placeholder-opacity-50">
@@ -163,10 +171,11 @@
             const lastName = document.getElementById('lastName').value;
             const email = document.getElementById('email').value;
             const country = document.getElementById('country').value;
+            const role = document.getElementById('role').value;
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
             
-            if (!firstName || !lastName || !email || !country || !password || !confirmPassword) {
+            if (!firstName || !lastName || !email || !country || !role || !password || !confirmPassword) {
                 this.classList.add('animate-shake');
                 setTimeout(() => this.classList.remove('animate-shake'), 820);
                 return;
@@ -177,7 +186,7 @@
                 return;
             }
             
-            console.log('Registration attempt:', { firstName, lastName, email, country, password });
+            console.log('Registration attempt:', { firstName, lastName, email, country, role, password });
             alert('Registration attempt successful! Check the console for details.');
         });
 
@@ -217,3 +226,4 @@
     </script>
 </body>
 </html>
+
