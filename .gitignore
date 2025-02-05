@@ -1,0 +1,60 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+env/
+*.env
+
+# Django specific
+db.sqlite3
+db.sqlite3-journal
+/media/
+*.log
+
+# Django migrations
+*/migrations/__pycache__/
+*/migrations/*.pyc
+*/migrations/*.pyo
+*/migrations/*.pyd
+
+# Static files
+staticfiles/
+static/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# macOS
+.DS_Store
+
+# pip
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Coverage reports
+htmlcov/
+.coverage
+.tox/
+
+# Docker
+*.dockerfile
+docker-compose.override.yml
+
+# Node.js related (if used)
+node_modules/
+
+# Gunicorn
+gunicorn-error.log
+
+# AWS
+*.pem
+.envrc
+
+# Celery
+celerybeat-schedule

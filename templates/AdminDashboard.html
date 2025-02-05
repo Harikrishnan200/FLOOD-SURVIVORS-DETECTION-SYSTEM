@@ -1,0 +1,386 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FloodTrace Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#7c3aed',
+                        'primary-hover': '#6d28d9',
+                        'light-violet': '#ddd6fe',
+                        'dark-violet': '#4c1d95',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            border-radius: 0.5rem;
+        }
+        .video-container img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        #map {
+            height: 100%;
+            width: 100%;
+            border-radius: 0.5rem;
+        }
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .content-below-header {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+    <meta name="csrf-token" content="{{ csrf_token }}">
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 flex">
+    
+    {% include 'Admin-navbar.html' %}
+
+    <div class="flex-1 ml-64 transition-all duration-300">
+       
+        {% include 'Admin-header.html' %}
+
+        <main class="flex-1 overflow-y-auto bg-[#F3F3F2] dark:bg-gray-900 p-4 sm:p-6 lg:p-8 content-below-header">
+            <div class="max-w-7xl mx-auto">
+                <h2 class="text-2xl font-bold mb-6 dark:text-white">Real-Time Dashboard</h2>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm mb-8">
+                    <form id="ipCamForm" class="flex flex-col sm:flex-row items-center">
+                        {% csrf_token %}
+                        <input
+                            type="url"
+                            id="ip_cam_url"
+                            name="ip_cam_url"
+                            placeholder="Enter IP Camera URL"
+                            required
+                            class="w-full sm:flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg 
+                            focus:outline-none focus:ring-2 focus:ring-purple-600 dark:bg-gray-700 dark:text-white"
+                        >
+                        <button
+                            type="submit"
+                            class="mt-4 sm:mt-0 sm:ml-4 w-full sm:w-auto bg-indigo-500 text-white py-2 px-4 rounded-lg font-semibold
+                            hover:bg-indigo-400 transition-colors"
+                        >
+                            Submit
+                        </button>
+                    </form>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                    <div class="lg:col-span-2 h-96 overflow-hidden rounded-lg shadow-md border-2 border-gray-200 dark:border-gray-700">
+                        <div id="videoContainer" class="video-container bg-black flex items-center justify-center">
+                            {% if ip_cam_url %}
+                                <img src="{% url 'video_feed' %}?ip_cam_url={{ ip_cam_url }}" alt="IP Webcam Stream">
+                            {% else %}
+                                <p id="noVideoMessage" class="text-white text-xl">No Signal</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="h-96 rounded-lg shadow-md overflow-hidden border-2 border-gray-200 dark:border-gray-700">
+                        <div id="map"></div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6">
+                    <!-- My Location Box -->
+                    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 shadow-sm">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Current Location</h3>
+                            <i class="ri-map-pin-user-fill text-2xl text-primary"></i>
+                        </div>
+                        <div class="space-y-2">
+                            <p id="myLocation" class="text-sm text-gray-600 dark:text-gray-400">
+                                <span class="font-medium">Location:</span> 
+                                <!-- This will be updated with the user's location -->
+                            </p>
+                            <p id="myLocationLatitude" class="text-sm text-gray-600 dark:text-gray-400">
+                                <span class="font-medium">Latitude:</span> 
+                                <!-- This will be updated with the user's latitude -->
+                            </p>
+                            <p id="myLocationLongitude" class="text-sm text-gray-600 dark:text-gray-400">
+                                <span class="font-medium">Longitude:</span> 
+                                <!-- This will be updated with the user's longitude -->
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-gray-500 dark:text-gray-400 text-sm font-medium">Detected</h3>
+                            <div class="flex items-center space-x-2">
+                                <i class="ri-group-line text-2xl text-primary"></i>
+                            </div>
+                        </div>
+                        <p id="uniquePersonCount" class="text-2xl font-semibold text-gray-900 dark:text-white mt-2">0</p>
+                        <p class="text-red-600 text-sm mt-2">↑ <span id="newTasksCount">0</span> new tasks</p>
+                    </div>
+                </div>
+
+                
+
+                <div class="overflow-hidden rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-4 dark:text-white p-4 bg-[#FEFEFF] dark:bg-gray-800">Data Table</h3>
+                    <div class="table-container">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 table-slide">
+                            <thead class="bg-gray-50 dark:bg-gray-700">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        Time
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        Count
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        Location
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        Action
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        Status
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-[#FEFEFF] dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">2023-05-15 09:30:00</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">5</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">New York, USA</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-xs">
+                                            View
+                                        </button>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                            Active
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">2023-05-15 10:15:00</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">3</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">London, UK</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-xs">
+                                            View
+                                        </button>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                            Warning
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">2023-05-15 11:00:00</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">7</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">Tokyo, Japan</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-xs">
+                                            View
+                                        </button>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                            Critical
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="{% static 'JS/scripts.js' %}"></script>
+    <script>
+        
+
+        // Initialize Leaflet map
+        const map = L.map('map').setView([20, 0], 2);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        const locations = [
+            { coords: [40.7128, -74.0060], label: 'New York City, USA' },
+            { coords: [48.8566, 2.3522], label: 'Paris, France' },
+            { coords: [35.6762, 139.6503], label: 'Tokyo, Japan' }
+        ];
+
+        const polylineCoords = [];
+
+        locations.forEach(location => {
+            L.marker(location.coords)
+                .addTo(map)
+                .bindPopup(`<b>${location.label}</b>`)
+                .openPopup();
+
+            polylineCoords.push(location.coords);
+        });
+
+        L.polyline(polylineCoords, { color: 'blue' }).addTo(map);
+
+        // Function to get CSRF token
+        function getCsrfToken() {
+            return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        }
+
+        // Handle form submission
+        const ipCamForm = document.getElementById('ipCamForm');
+        ipCamForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            let newIpCamUrl = document.getElementById('ip_cam_url').value.trim();
+            if (newIpCamUrl && !newIpCamUrl.startsWith('http://') && !newIpCamUrl.startsWith('https://')) {
+                newIpCamUrl = 'http://' + newIpCamUrl;
+            }
+            console.log('Form submitted with URL:', newIpCamUrl);
+
+            try {
+                const response = await fetch('/admin/dashboard/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': getCsrfToken(),
+                    },
+                    body: new URLSearchParams({
+                        'ip_cam_url': newIpCamUrl,
+                    }),
+                    
+                });
+                
+
+                if (response.ok) {
+                    console.log('Form submitted successfully');
+                    handleVideoDisplay(newIpCamUrl);
+                } else {
+                    console.error('Form submission failed');
+                }
+            } catch (error) {
+                console.error('An error occurred:', error);
+            }
+        });
+
+       // Function to handle video display
+    function handleVideoDisplay(ipCamUrl) {
+        const videoContainer = document.getElementById('videoContainer');
+        const noVideoMessage = document.getElementById('noVideoMessage');
+        const videoFeed = document.getElementById('videoFeed');
+
+        if (ipCamUrl) {
+            // Update the img src attribute to the new IP camera URL
+            setInterval(updateUniquePersonCount, 1000);
+            if (!videoFeed) {
+                const imgElement = document.createElement('img');
+                imgElement.id = 'videoFeed';
+                imgElement.src = `/admin/video_feed/?ip_cam_url=${encodeURIComponent(ipCamUrl)}`;
+                imgElement.alt = 'IP Webcam Stream';
+                videoContainer.innerHTML = '';  // Clear any existing content
+                videoContainer.appendChild(imgElement);
+            } else {
+                videoFeed.src = `/admin/video_feed/?ip_cam_url=${encodeURIComponent(ipCamUrl)}`;
+                
+                
+                
+            }
+
+            if (noVideoMessage) {
+                noVideoMessage.style.display = 'none';  // Hide the no signal message
+            }
+        } else {
+            videoContainer.innerHTML = '<p id="noVideoMessage" class="text-white text-xl">No Signal</p>';
+        }
+    }
+    
+    
+    // Function to fetch and update the unique person count
+    function updateUniquePersonCount() {
+    // Fetch data from the updated endpoint
+    fetch('/admin/get_unique_person_count/')
+        .then(response => response.json())
+        .then(data => {
+            // Update the unique person count
+            document.getElementById('uniquePersonCount').innerText = data.unique_person_count;
+
+            // Update the location data
+            const latitude = data.latitude || 'N/A';
+            const longitude = data.longitude || 'N/A';
+            const locationText = `${latitude}, ${longitude}`;
+
+            document.getElementById('myLocation').innerHTML = `<span class="font-medium">Location:</span> ${locationText}`;
+            document.getElementById('myLocationLatitude').innerHTML = `<span class="font-medium">Latitude:</span> ${latitude}`;
+            document.getElementById('myLocationLongitude').innerHTML = `<span class="font-medium">Longitude:</span> ${longitude}`;
+        })
+        .catch(error => console.error('Error fetching data:', error));
+}
+
+    
+
+
+        // Call handleVideoDisplay when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            const ipCamUrl = ''; // Initialize with an empty string
+            handleVideoDisplay(ipCamUrl);
+        });
+
+        // Function to get and display user's location
+        function getUserLocation() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+                    
+                    document.getElementById('myLocationLatitude').innerHTML = `<span class="font-medium">Latitude:</span> ${latitude}`;
+                    document.getElementById('myLocationLongitude').innerHTML = `<span class="font-medium">Longitude:</span> ${longitude}`;
+                    
+                    // You can use a reverse geocoding service to get the location name
+                    // For simplicity, we'll just display coordinates
+                    document.getElementById('myLocation').innerHTML = `<span class="font-medium">Location:</span> ${latitude}, ${longitude}`;
+                }, function(error) {
+                    console.error("Error getting location:", error);
+                    document.getElementById('myLocation').innerHTML = `<span class="font-medium">Location:</span> Unable to retrieve location`;
+                });
+            } else {
+                console.log("Geolocation is not supported by this browser.");
+                document.getElementById('myLocation').innerHTML = `<span class="font-medium">Location:</span> Geolocation not supported`;
+            }
+        }
+
+        // Call getUserLocation when the page loads
+        document.addEventListener('DOMContentLoaded', getUserLocation);
+    </script>
+</body>
+</html>
+

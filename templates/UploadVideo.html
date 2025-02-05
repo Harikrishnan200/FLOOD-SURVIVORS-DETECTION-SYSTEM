@@ -1,0 +1,487 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FloodTrace - Upload Video</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'CSS/style.css' %}">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#7c3aed',
+                        'primary-hover': '#6d28d9',
+                        'light-violet': '#ddd6fe',
+                        'dark-violet': '#4c1d95',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .upload-area.drag-over {
+            background-color: rgba(124, 58, 237, 0.1);
+            border-color: #7c3aed;
+        }
+        .file-name {
+            display: none;
+            margin-top: 0.5rem;
+            font-weight: 600;
+        }
+
+        .alert {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 0.5rem;
+            background-color: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .alert-content {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .alert.hide {
+            opacity: 0;
+            transform: translateX(100%);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 flex">
+    {% include 'Admin-navbar.html' %}
+
+    <div class="flex-1 ml-64 transition-all duration-300">
+        {% include 'Admin-header.html' %}
+    
+        
+        <!-- Alert Container -->
+        <div id="alertContainer" class="fixed top-4 right-4 z-50 w-80"></div>
+
+        <main class="flex-1 overflow-y-auto bg-[#F3F3F2] dark:bg-gray-900 p-4 sm:p-6 lg:p-8 content-below-header">
+            <div class="max-w-7xl mx-auto">
+                <h2 class="text-2xl font-bold mb-6 dark:text-white">Upload Video</h2>
+
+                <!-- Upload Component -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm mb-8">
+                    <form method="" id="uploadForm" class="space-y-6" action="" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="upload-area cursor-pointer border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center hover:border-primary dark:hover:border-primary transition-colors">
+                            <input type="file" id="fileInput" class="hidden" name="video_file" accept="video/*">
+                            <div class="flex flex-col items-center">
+                                <i id="uploadIcon" class="ri-upload-cloud-2-line text-4xl text-gray-400 dark:text-gray-500 mb-3"></i>
+                                <h3 id="uploadText" class="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-1">Upload a File</h3>
+                                <p id="dragDropText" class="text-sm text-gray-500 dark:text-gray-400">Drag and drop files here</p>
+                                <p class="text-xs text-gray-400 dark:text-gray-500 mt-2">Supported formats: MP4, AVI, MOV</p>
+                                <p id="fileName" class="file-name text-sm text-gray-700 dark:text-gray-300"></p>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full sm:w-auto px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
+                            Submit
+                        </button>
+                    </form>
+                </div>
+
+
+                
+                <!-- <div class="mb-8 overflow-hidden rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-4 dark:text-white p-4 bg-[#FEFEFF] dark:bg-gray-800">Recent Uploads</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <thead class="bg-gray-50 dark:bg-gray-700">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">File Name</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Upload Date</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Detected</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Download</th>
+                                
+                                </tr>
+                            </thead>
+                            <tbody class="bg-[#FEFEFF] dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                <tr class="sm:table-row flex flex-col mb-2 sm:mb-0">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 sm:w-auto w-full"><span class="sm:hidden font-bold mr-2">File Name:</span>flood-video-01.mp4</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 sm:w-auto w-full"><span class="sm:hidden font-bold mr-2">Date:</span>2023-12-30</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 sm:w-auto w-full"><span class="sm:hidden font-bold mr-2">Detected:</span>5</td>
+                                    <td class="px-6 py-4 whitespace-nowrap sm:w-auto w-full">
+                                        <span class="sm:hidden font-bold mr-2">Status:</span>
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Processed</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap sm:w-auto w-full">
+                                        <span class="sm:hidden font-bold mr-2">Download:</span>
+                                        <button class="bg-primary hover:bg-primary-hover text-white font-bold py-1 px-3 rounded text-xs flex items-center">
+                                            <i class="ri-download-2-line mr-1"></i> Download
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="sm:table-row flex flex-col mb-2 sm:mb-0">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 sm:w-auto w-full"><span class="sm:hidden font-bold mr-2">File Name:</span>flood-video-02.mp4</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 sm:w-auto w-full"><span class="sm:hidden font-bold mr-2">Date:</span>2023-12-29</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 sm:w-auto w-full"><span class="sm:hidden font-bold mr-2">Detected:</span>None</td>
+                                    <td class="px-6 py-4 whitespace-nowrap sm:w-auto w-full">
+                                        <span class="sm:hidden font-bold mr-2">Status:</span>
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Processing</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap sm:w-auto w-full">
+                                        <span class="sm:hidden font-bold mr-2">Download:</span>
+                                        <button class="bg-gray-300 text-gray-800 font-bold py-1 px-3 rounded text-xs cursor-not-allowed flex items-center" disabled>
+                                            <i class="ri-download-2-line mr-1"></i> Download
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>  -->
+
+
+                <!-- Recent Uploads Table -->
+                <div class="mb-8 overflow-hidden rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-4 dark:text-white p-4 bg-[#FEFEFF] dark:bg-gray-800">Recent Uploads</h3>
+                    <div class="overflow-x-auto">
+                        <table id="recent-uploads-table" class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <thead class="bg-gray-50 dark:bg-gray-700">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">File Name</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Upload Date</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Detected</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Download</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-[#FEFEFF] dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                <!-- Table rows will be dynamically inserted here -->
+                                {% if current_data %}
+                                {% for i in current_data %}
+                                <tr class="sm:table-row flex flex-col mb-2 sm:mb-0" id="video-{{i.id}}">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 sm:w-auto w-full"><span class="sm:hidden font-bold mr-2">File Name:</span>{{i.video_name}}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 sm:w-auto w-full"><span class="sm:hidden font-bold mr-2">Date:</span>{{i.created_at}}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 sm:w-auto w-full"><span class="sm:hidden font-bold mr-2">Detected:</span>{{i.total_persons_detected}}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap sm:w-auto w-full">
+                                        <span class="sm:hidden font-bold mr-2">Status:</span>
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Processed</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap sm:w-auto w-full">
+                                        <span class="sm:hidden font-bold mr-2">Download:</span>
+                                        <button class="bg-primary hover:bg-primary-hover text-white font-bold py-1 px-3 rounded text-xs flex items-center" onclick="download('{{i.id}}')">
+                                            <i class="ri-download-2-line mr-1"></i> Download
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+        
+
+                <!-- Processing History Table -->
+                <div class="mb-8 overflow-hidden rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-4 dark:text-white p-4 bg-[#FEFEFF] dark:bg-gray-800">Processing History</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <thead class="bg-gray-50 dark:bg-gray-700">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Video ID</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Process Time</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Result</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-[#FEFEFF] dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                {% if previous_data %}
+                                    {% for i in previous_data %}
+                                        <tr>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">{{i.video_name}}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">{{i.processing_time}}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Success</span>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="3" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-center">
+                                            <div class="flex flex-col items-center justify-center py-6">
+                                                <svg class="w-12 h-12 text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+                                                </svg>
+                                                <span class="font-medium">No data available</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="{% static 'JS/scripts.js' %}"></script>
+    <script>
+    
+        const uploadArea = document.querySelector('.upload-area');
+        const fileInput = document.getElementById('fileInput');
+        const uploadForm = document.getElementById('uploadForm');
+        const uploadIcon = document.getElementById('uploadIcon');
+        const uploadText = document.getElementById('uploadText');
+        const dragDropText = document.getElementById('dragDropText');
+        const fileNameElement = document.getElementById('fileName');
+        const submitButton = uploadForm.querySelector('button[type="submit"]');
+
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('drag-over');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('drag-over');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                handleFile(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            console.log('File selected:', file.name);
+            fileNameElement.textContent = file.name;
+            fileNameElement.style.display = 'block';
+            uploadIcon.className = 'ri-file-text-line text-4xl text-primary mb-3';
+            uploadText.textContent = 'File Selected';
+            dragDropText.textContent = 'Click to change file';
+        }
+
+
+
+
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+            const submitButton = document.querySelector('button[type="submit"]');
+            
+            // Disable the submit button to prevent multiple submissions
+            submitButton.disabled = true;
+        
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                });
+        
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Success:', result);
+                    alert(result.message);
+        
+                    startPolling();
+                } else {
+                    const error = await response.json();
+                    console.error('Error:', error);
+                    alert(`Failed to upload file. ${error.error}`);
+                }
+            } catch (err) {
+                console.error('Fetch Error:', err);
+                alert('An unexpected error occurred.');
+            } finally {
+                // Re-enable the submit button after the submission attempt
+                submitButton.disabled = false;
+            }
+        });
+
+        function startPolling() {
+            const intervalId = setInterval(async () => {
+                try {
+                    const response = await fetch('/video_upload/recent_data/');
+                    if (response.ok) {
+                        const data = await response.json();
+                        updateTable(data.current_data);
+                        console.log('Data received:', data);
+                        clearInterval(intervalId); // Stop polling once data is received
+                        alert('Data is ready and table updated.');
+                    } else {
+                        console.error('Polling Error:', await response.json());
+                    }
+                } catch (err) {
+                    console.error('Polling Fetch Error:', err);
+                }
+            }, 3000); // Poll every 3 seconds
+        }
+        
+        
+        function fetchUpdatedContent() {
+            fetch('/admin/upload_video//')
+                .then(response => response.text())
+                .then(html => {
+                    // Update the part of your page with the new HTML
+                    document.getElementById('content').innerHTML = html;
+                })
+                .catch(err => console.error('Error fetching updated content:', err));
+        }
+        
+function updateTable(data) {
+    // Select the table body
+    const tableBody = document.querySelector('#recent-uploads-table tbody');
+    // Clear the current table contents
+    tableBody.innerHTML = '';
+
+    // Iterate over each item in the data array
+    data.forEach(item => {
+        // Create a new table row
+        const row = document.createElement('tr');
+        row.className = 'sm:table-row flex flex-col mb-2 sm:mb-0';
+
+        // Format the row's inner HTML
+        row.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 sm:w-auto w-full">
+                <span class="sm:hidden font-bold mr-2">File Name:</span>${item.video_name}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 sm:w-auto w-full">
+                <span class="sm:hidden font-bold mr-2">Date:</span>${new Date(item.created_at).toLocaleDateString()}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 sm:w-auto w-full">
+                <span class="sm:hidden font-bold mr-2">Detected:</span>${item.total_persons_detected}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap sm:w-auto w-full">
+                <span class="sm:hidden font-bold mr-2">Status:</span>
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${item.status ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">
+                    ${item.status ? 'Processed' : 'Processing'}
+                </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap sm:w-auto w-full">
+                <span class="sm:hidden font-bold mr-2">Download:</span>
+                ${item.status
+                    ? `<button class="bg-primary hover:bg-primary-hover text-white font-bold py-1 px-2 rounded text-xs flex items-center max-w-[100px]" onclick="download(${item.id})">
+                           <i class="ri-download-2-line mr-1"></i> Download
+                       </button>`
+                    : `<button class="bg-primary hover:bg-primary-hover text-white font-bold py-1 px-2 rounded text-xs flex items-center max-w-[100px]" disabled>
+                           <i class="ri-download-2-line mr-1"></i> Download
+                       </button>`}
+            </td>
+        `;
+
+        // Append the row to the table body
+        tableBody.appendChild(row);
+    });
+}
+
+
+           // Alert System
+           function createAlert(type, title, message) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert';
+            
+            let borderColor, titleColor;
+            switch(type) {
+                case 'success':
+                    borderColor = 'border-l-4 border-green-500';
+                    titleColor = 'text-green-700';
+                    break;
+                case 'error':
+                    borderColor = 'border-l-4 border-red-500';
+                    titleColor = 'text-red-700';
+                    break;
+                case 'warning':
+                    borderColor = 'border-l-4 border-yellow-500';
+                    titleColor = 'text-yellow-700';
+                    break;
+            }
+            
+            alertDiv.className = `alert ${borderColor} dark:bg-gray-800`;
+            
+            alertDiv.innerHTML = `
+                <div class="alert-content">
+                    <div class="flex flex-col">
+                        <span class="font-semibold ${titleColor} dark:text-gray-100">${title}</span>
+                        <span class="text-sm text-gray-600 dark:text-gray-300">${message}</span>
+                    </div>
+                </div>
+                <button class="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors">
+                    <i class="ri-close-line text-lg"></i>
+                </button>
+            `;
+
+            const closeBtn = alertDiv.querySelector('button');
+            closeBtn.addEventListener('click', () => {
+                alertDiv.classList.add('hide');
+                setTimeout(() => alertDiv.remove(), 300);
+            });
+
+            document.getElementById('alertContainer').appendChild(alertDiv);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (alertDiv.isConnected) {
+                    alertDiv.classList.add('hide');
+                    setTimeout(() => alertDiv.remove(), 300);
+                }
+            }, 5000);
+        }
+
+       
+        // File handling function update
+        function handleFile(file) {
+            console.log('File selected:', file.name);
+            fileNameElement.textContent = file.name;
+            fileNameElement.style.display = 'block';
+            uploadIcon.className = 'ri-file-text-line text-4xl text-primary mb-3';
+            uploadText.textContent = 'File Selected';
+            dragDropText.textContent = 'Click to change file';
+            createAlert('success', 'File Selected', `${file.name} is ready to upload`);
+        }
+
+        // Example of how to trigger different types of alerts (you can remove this in production)
+        // createAlert('success', 'Success', 'Operation completed successfully!');
+        // createAlert('error', 'Error', 'Something went wrong!');
+        // createAlert('warning', 'Warning', 'Please check your input!');
+
+
+        function download(videoId) {
+    if (typeof videoId === 'undefined' || videoId === null) {
+        console.error('Invalid videoId:', videoId);
+        return;
+    }
+    const url = `/video_upload/download/${videoId}/`;
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = ''; 
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+        
+    </script>
+</body>
+</html>

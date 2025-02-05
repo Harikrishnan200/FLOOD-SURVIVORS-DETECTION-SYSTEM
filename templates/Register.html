@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FloodTrace Registration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        @keyframes gradientBackground {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(45deg, #4b6cb7, #182848, #283048, #2b5876, #4e4376);
+            background-size: 300% 300%;
+            animation: gradientBackground 10s ease infinite;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        #tagline {
+            transition: opacity 0.5s ease-in-out;
+        }
+        .country-option {
+            display: flex;
+            align-items: center;
+        }
+        .country-option img {
+            width: 20px;
+            margin-right: 8px;
+        }
+        select option {
+            background-color: #4b6cb7;
+            color: white;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+            20%, 40%, 60%, 80% { transform: translateX(10px); }
+        }
+        .shake {
+            animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
+    <header class="text-center mb-8">
+        <h1 class="text-4xl font-bold text-white mb-2 drop-shadow-lg">FloodTrace</h1>
+        <p id="tagline" class="text-lg text-white opacity-80 h-6"></p>
+    </header>
+    <div class="glass p-8 rounded-lg shadow-2xl w-full max-w-md transition-all duration-500 hover:translate-y-[-10px] hover:shadow-lg">
+        <h2 class="text-2xl font-bold mb-6 text-center text-white">Create an Account</h2>
+        <form id="registerForm" class="space-y-4" method="post" action="{% url 'register' %}">
+            {% csrf_token %}
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="firstName" class="block text-sm font-medium text-white">First Name</label>
+                    <input type="text" id="firstName" name="first_name" required placeholder="John" class="mt-1 block w-full px-3 py-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-white placeholder-white placeholder-opacity-50">
+                </div>
+                <div>
+                    <label for="lastName" class="block text-sm font-medium text-white">Last Name</label>
+                    <input type="text" id="lastName" name="last_name" required placeholder="Doe" class="mt-1 block w-full px-3 py-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-white placeholder-white placeholder-opacity-50">
+                </div>
+            </div>
+            <div>
+                <label for="email" class="block text-sm font-medium text-white">Email address</label>
+                <input type="email" id="email" name="email" required placeholder="john.doe@example.com" class="mt-1 block w-full px-3 py-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-white placeholder-white placeholder-opacity-50">
+            </div>
+            <div>
+                <label for="country" class="block text-sm font-medium text-white">Country</label>
+                <select id="country" name="country" required class="mt-1 block w-full px-3 py-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-white">
+                    <option value="">Select a country</option>
+                </select>
+            </div>
+            <div>
+                <label for="role" class="block text-sm font-medium text-white">Role</label>
+                <select id="role" name="role" required class="mt-1 block w-full px-3 py-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-white">
+                    <option value="">Select a role</option>
+                    <option value="user">User</option>
+                    <option value="Admin">Admin</option>
+                </select>
+            </div>
+            <div class="relative">
+                <label for="password" class="block text-sm font-medium text-white">Password</label>
+                <input type="password" id="password" name="password1" required placeholder="••••••••" class="mt-1 block w-full px-3 py-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-white placeholder-white placeholder-opacity-50">
+                <span class="passwordToggle absolute right-3 top-1/2 transform translate-y-1 cursor-pointer text-white opacity-70">
+                    <i class="far fa-eye"></i>
+                </span>
+            </div>
+            <div class="relative">
+                <label for="confirmPassword" class="block text-sm font-medium text-white">Confirm Password</label>
+                <input type="password" id="confirmPassword" name="password2" required placeholder="••••••••" class="mt-1 block w-full px-3 py-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-white placeholder-white placeholder-opacity-50">
+                <span class="passwordToggle absolute right-3 top-1/2 transform translate-y-1 cursor-pointer text-white opacity-70">
+                    <i class="far fa-eye"></i>
+                </span>
+            </div>
+            <div>
+                <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Create Account
+                </button>
+            </div>
+        </form>
+        <div class="text-center mt-4">
+            <a href="{% url 'login' %}" class="text-sm font-medium text-blue-200 hover:text-blue-100">Already have an account? Login</a>
+        </div>
+        <!-- New error message section -->
+        {% if messages %}
+        <div id="errorMessages" class="mt-4">
+            
+                {% for message in messages %}
+                    
+                    <p class="text-red-300 bg-red-900 bg-opacity-25 border border-red-400 rounded-md p-3 text-sm text-center shake">
+                        {{message}}
+                    </p>
+    
+                {% endfor %}
+            
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        const tagline = document.getElementById('tagline');
+        const text = "Automated Flood Survivor Detection System";
+        let index = 0;
+        let isDeleting = false;
+
+        function animateTagline() {
+            const currentText = text.substring(0, index);
+            tagline.textContent = currentText;
+
+            if (!isDeleting && index === text.length) {
+                setTimeout(() => {
+                    isDeleting = true;
+                    tagline.style.opacity = '0';
+                }, 1000);
+            } else if (isDeleting && index === 0) {
+                isDeleting = false;
+                tagline.style.opacity = '0';
+                setTimeout(() => {
+                    tagline.style.opacity = '1';
+                    animateTagline();
+                }, 500);
+                return;
+            } else {
+                tagline.style.opacity = '1';
+            }
+
+            index = isDeleting ? index - 1 : index + 1;
+            setTimeout(animateTagline, isDeleting ? 50 : 100);
+        }
+
+        animateTagline();
+
+        // Country dropdown population
+        const countrySelect = document.getElementById('country');
+        const countries = [
+            { name: 'United States', code: 'US' },
+            { name: 'United Kingdom', code: 'GB' },
+            { name: 'Canada', code: 'CA' },
+            { name: 'Australia', code: 'AU' },
+            { name: 'Germany', code: 'DE' },
+            { name: 'France', code: 'FR' },
+            { name: 'Japan', code: 'JP' },
+            { name: 'Brazil', code: 'BR' },
+            { name: 'India', code: 'IN' },
+            { name: 'China', code: 'CN' },
+            // Add more countries as needed
+        ];
+
+        countries.forEach(country => {
+            const option = document.createElement('option');
+            option.value = country.code;
+            option.innerHTML = `
+                <div class="country-option">
+                    <img src="https://flagcdn.com/w20/${country.code.toLowerCase()}.png" alt="${country.name} flag">
+                    ${country.name}
+                </div>
+            `;
+            countrySelect.appendChild(option);
+        });
+
+        const passwordToggles = document.querySelectorAll('.passwordToggle');
+        
+        passwordToggles.forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                const passwordField = this.previousElementSibling;
+                if (passwordField.type === 'password') {
+                    passwordField.type = 'text';
+                    this.innerHTML = '<i class="far fa-eye-slash"></i>';
+                    
+                    setTimeout(() => {
+                        passwordField.type = 'password';
+                        this.innerHTML = '<i class="far fa-eye"></i>';
+                    }, 3000);
+                }
+            });
+        });
+
+        const errorMessages = document.getElementById('errorMessages');
+            if (errorMessages.children.length > 0) {
+                setTimeout(() => {
+                    errorMessages.innerHTML = '';
+                }, 3000);
+            }
+
+        tailwind.config = {
+            theme: {
+                extend: {
+                    keyframes: {
+                        shake: {
+                            '0%, 100%': { transform: 'translateX(0)' },
+                            '10%, 30%, 50%, 70%, 90%': { transform: 'translateX(-10px)' },
+                            '20%, 40%, 60%, 80%': { transform: 'translateX(10px)' },
+                        }
+                    },
+                    animation: {
+                        shake: 'shake 0.82s cubic-bezier(.36,.07,.19,.97) both',
+                    }
+                }
+            }
+        }
+
+        
+    </script>
+</body>
+</html>
