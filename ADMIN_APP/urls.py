@@ -10,6 +10,7 @@ urlpatterns = [
     path('previous_data/', views.previous_data, name='previous_data'),
     path('user_profile/', views.user_profile, name='user_profile'),
     path('get_unique_person_count/', views.get_unique_person_count, name='get_unique_person_count'),
+    path('add_user/', views.add_user, name='add_users'),
 
     
 

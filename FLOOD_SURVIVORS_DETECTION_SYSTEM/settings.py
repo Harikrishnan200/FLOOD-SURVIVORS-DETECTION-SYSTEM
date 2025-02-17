@@ -52,7 +52,7 @@ INSTALLED_APPS = [
 #     'https://afb7-111-92-117-4.ngrok-free.app',  # Add your current ngrok URL here
 # ]
 CSRF_TRUSTED_ORIGINS = [
-    'https://8ac3-111-92-125-223.ngrok-free.app',
+    'https://bb36-111-92-67-34.ngrok-free.app',  # Add your current ngrok URL here
 ]
 
 # ---------

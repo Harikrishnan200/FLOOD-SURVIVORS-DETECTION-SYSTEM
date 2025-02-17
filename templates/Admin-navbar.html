@@ -67,7 +67,7 @@
 </div> {% endcomment %}
 
 <!-- Navbar HTML -->
-<div id="navbar" class="h-screen bg-[#FEFEFF] dark:bg-gray-800 transition-all duration-300 w-64 flex flex-col fixed left-0 top-0 z-50">
+<!-- <div id="navbar" class="h-screen bg-[#FEFEFF] dark:bg-gray-800 transition-all duration-300 w-64 flex flex-col fixed left-0 top-0 z-50">
     <div class="flex items-center justify-between p-4">
         <h2 class="text-xl font-semibold dark:text-white">FloodTrace</h2>
         <button id="toggleSidebar" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
@@ -133,5 +133,165 @@
             </div>
         </div>
     </div>
+</div> -->
+
+
+<!-- <div id="navbar" class="h-screen bg-[#FEFEFF] dark:bg-gray-800 transition-all duration-300 w-64 flex flex-col fixed left-0 top-0 z-50">
+    <div class="flex items-center justify-between p-4">
+        <h2 class="text-xl font-semibold dark:text-white">FloodTrace</h2>
+        <button id="toggleSidebar" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+            <i class="ri-menu-line text-xl dark:text-white"></i>
+        </button>
+    </div>
+
+    <div class="flex-1 px-3 py-4 space-y-1">
+        <div class="relative">
+            <i class="ri-search-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            <input type="text" placeholder="Search" class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
+        </div>
+
+        <div class="space-y-1">
+            <a href="{% url 'dashboard' %}" class="flex items-center p-2 rounded-lg hover:bg-light-violet dark:hover:bg-gray-700 group navbar-button">
+                <i class="ri-dashboard-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white"></i>
+                <span class="text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white">Dashboard</span>
+            </a>
+            
+            <a href="{% url 'upload_video' %}" class="flex items-center p-2 rounded-lg hover:bg-light-violet dark:hover:bg-gray-700 group navbar-button">
+                <i class="ri-video-upload-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white"></i>
+                <span class="text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white">Upload Video</span>
+            </a>
+            
+            <a href="{% url 'previous_data' %}" class="flex items-center p-2 rounded-lg hover:bg-light-violet dark:hover:bg-gray-700 group navbar-button">
+                <i class="ri-history-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white"></i>
+                <span class="text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white">Previous Data</span>
+            </a>
+            
+            <a href="{% url 'add_users' %}" class="flex items-center p-2 rounded-lg bg-primary-hover text-white dark:bg-gray-700 group">
+                <i class="ri-user-add-line text-xl mr-3"></i>
+                <span>Add Users</span>
+            </a>
+            
+            <a href="{% url 'user_profile' %}" class="flex items-center p-2 rounded-lg hover:bg-light-violet dark:hover:bg-gray-700 group navbar-button">
+                <i class="ri-user-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white"></i>
+                <span class="text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white">User Profile</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="px-3 py-4 space-y-1">
+        <a href="#" class="flex items-center p-2 rounded-lg hover:bg-light-violet dark:hover:bg-gray-700 group navbar-button">
+            <i class="ri-notification-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white"></i>
+            <span class="text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white">Notifications</span>
+        </a>
+        <a href="#" class="flex items-center p-2 rounded-lg hover:bg-light-violet dark:hover:bg-gray-700 group navbar-button">
+            <i class="ri-question-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white"></i>
+            <span class="text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white">Support</span>
+        </a>
+        <a href="#" class="flex items-center p-2 rounded-lg hover:bg-light-violet dark:hover:bg-gray-700 group navbar-button">
+            <i class="ri-settings-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white"></i>
+            <span class="text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white">Settings</span>
+        </a>
+    </div>
+
+    <div class="p-4 mt-auto border-t border-gray-200 dark:border-gray-700">
+        <div class="flex items-center">
+            <img src="https://via.placeholder.com/40" alt="User" class="w-10 h-10 rounded-full">
+            <div class="ml-3">
+                <p class="text-sm font-medium text-gray-700 dark:text-gray-200">Anita Cruz</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400">anita@untitledui.com</p>
+            </div>
+        </div>
+    </div>
+</div> -->
+
+
+<div id="navbar" class="h-screen bg-[#FEFEFF] dark:bg-gray-800 transition-all duration-300 w-64 flex flex-col fixed left-0 top-0 z-50">
+    <div class="flex items-center justify-between p-4">
+        <h2 class="text-xl font-semibold dark:text-white">FloodTrace</h2>
+        <button id="toggleSidebar" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+            <i class="ri-menu-line text-xl dark:text-white"></i>
+        </button>
+    </div>
+
+    <div class="flex-1 px-3 py-4 space-y-1">
+        <div class="relative">
+            <i class="ri-search-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            <input type="text" placeholder="Search" class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
+        </div>
+
+        <div class="space-y-1">
+            <button id="dashboardDropdown" class="w-full flex items-center p-2 rounded-lg bg-primary-hover text-white dark:bg-gray-700 group">
+                <i class="ri-dashboard-line text-xl mr-3"></i>
+                <span>Dashboard</span>
+                <i class="ri-arrow-down-s-line ml-auto transition-transform duration-300"></i>
+            </button>
+          
+            <div id="dashboardMenu" class="pl-6 space-y-1 overflow-hidden transition-all duration-300 max-h-0">
+                <a href="{% url 'dashboard' %}" class="flex items-center p-2 rounded-lg hover:bg-light-violet dark:bg-gray-700 group navbar-button">
+                    <i class="ri-bar-chart-box-line text-xl mr-3 text-primary dark:text-white"></i>
+                    <span class="text-primary dark:text-white">Real-Time</span>
+                </a>
+                <a href="{% url 'upload_video' %}" class="flex items-center p-2 rounded-lg hover:bg-light-violet dark:hover:bg-gray-700 group navbar-button">
+                    <i class="ri-video-upload-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white"></i>
+                    <span class="text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white">Upload Video</span>
+                </a>
+                <a href="{% url 'previous_data' %}" class="flex items-center p-2 rounded-lg hover:bg-light-violet dark:hover:bg-gray-700 group navbar-button">
+                    <i class="ri-history-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white"></i>
+                    <span class="text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white">Previous Data</span>
+                </a>
+                <a href="{% url 'user_profile' %}" class="flex items-center p-2 rounded-lg hover:bg-light-violet dark:hover:bg-gray-700 group navbar-button">
+                    <i class="ri-user-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white"></i>
+                    <span class="text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white">User</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="px-3 py-4 space-y-1">
+        <a href="#" class="flex items-center p-2 rounded-lg hover:bg-light-violet dark:hover:bg-gray-700 group navbar-button">
+            <i class="ri-notification-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white"></i>
+            <span class="text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white">Notifications</span>
+        </a>
+        <a href="#" class="flex items-center p-2 rounded-lg hover:bg-light-violet dark:hover:bg-gray-700 group navbar-button">
+            <i class="ri-question-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white"></i>
+            <span class="text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white">Support</span>
+        </a>
+        <a href="#" class="flex items-center p-2 rounded-lg hover:bg-light-violet dark:hover:bg-gray-700 group navbar-button">
+            <i class="ri-settings-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white"></i>
+            <span class="text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white">Settings</span>
+        </a>
+    </div>
+
+    <div class="p-4 mt-auto border-t border-gray-200 dark:border-gray-700">
+        <div class="flex items-center">
+            <img src="https://via.placeholder.com/40" alt="User" class="w-10 h-10 rounded-full">
+            <div class="ml-3">
+                <p class="text-sm font-medium text-gray-700 dark:text-gray-200">Anita Cruz</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400">anita@untitledui.com</p>
+            </div>
+        </div>
+    </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const dashboardDropdown = document.getElementById('dashboardDropdown');
+        const dashboardMenu = document.getElementById('dashboardMenu');
+        const arrowIcon = dashboardDropdown.querySelector('.ri-arrow-down-s-line');
+        let isOpen = false;
+
+        dashboardDropdown.addEventListener('click', function() {
+            isOpen = !isOpen;
+            if (isOpen) {
+                dashboardMenu.style.maxHeight = dashboardMenu.scrollHeight + 'px';
+                arrowIcon.style.transform = 'rotate(180deg)';
+            } else {
+                dashboardMenu.style.maxHeight = '0';
+                arrowIcon.style.transform = 'rotate(0)';
+            }
+        });
+    });
+</script>
+
+
 
