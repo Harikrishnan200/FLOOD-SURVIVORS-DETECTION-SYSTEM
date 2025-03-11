@@ -6,6 +6,7 @@
     <title>User Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
@@ -29,10 +30,15 @@
             font-family: 'Inter', sans-serif;
         }
         #map {
-            height: 300px;
+            height: 250px;
             width: 100%;
             border-radius: 0.5rem;
             z-index: 1;
+        }
+        @media (min-width: 640px) {
+            #map {
+                height: 300px;
+            }
         }
         @media (min-width: 768px) {
             #map {
@@ -48,14 +54,63 @@
             position: relative;
             z-index: 1;
         }
+
+        /* Mobile sidebar overlay */
+        @media (max-width: 768px) {
+            #navbar.mobile-open {
+                transform: translateX(0) !important;
+            }
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 40;
+            }
+            .sidebar-overlay.active {
+                display: block;
+            }
+        }
+
+        /* Hide scrollbar for table container */
+        .scrollbar-hide {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Responsive table styles */
+        @media (max-width: 640px) {
+            .table-container {
+                margin: 0 -1rem;
+                width: calc(100% + 2rem);
+            }
+            .table-scroll-container {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                margin: 0 1rem;
+            }
+        }
     </style>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 flex">
-    <div id="navbar" class="h-screen bg-[#FEFEFF] dark:bg-gray-800 transition-all duration-300 w-64 flex flex-col fixed left-0 top-0 z-50">
+<body class="bg-gray-100 dark:bg-gray-900">
+    <!-- Sidebar Overlay -->
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <!-- Sidebar -->
+    <div id="navbar" class="h-screen bg-[#FEFEFF] dark:bg-gray-800 transition-all duration-300 w-64 flex flex-col fixed left-0 top-0 z-50 transform -translate-x-full md:translate-x-0">
         <div class="flex items-center justify-between p-4">
             <h2 class="text-xl font-semibold dark:text-white">UserPortal</h2>
-            <button id="toggleSidebar" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+            <button id="toggleSidebar" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 md:block hidden">
                 <i class="ri-menu-line text-xl dark:text-white"></i>
+            </button>
+            <button id="closeMobileSidebar" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 md:hidden">
+                <i class="ri-close-line text-xl dark:text-white"></i>
             </button>
         </div>
 
@@ -70,11 +125,6 @@
                     <i class="ri-dashboard-line text-xl mr-3"></i>
                     <span>Overview</span>
                 </button>
-                
-                <button id="messagesBtn" class="flex items-center w-full p-2 rounded-lg hover:bg-light-blue dark:hover:bg-gray-700 group">
-                    <i class="ri-message-2-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200"></i>
-                    <span class="text-gray-700 group-hover:text-primary dark:text-gray-200">Messages</span>
-                </button>
             </div>
         </div>
 
@@ -83,7 +133,7 @@
                 <i class="ri-settings-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200"></i>
                 <span class="text-gray-700 group-hover:text-primary dark:text-gray-200">Settings</span>
             </a>
-            <a href="#" class="flex items-center p-2 rounded-lg hover:bg-light-blue dark:hover:bg-gray-700 group">
+            <a href="{% url 'logout' %}" class="flex items-center p-2 rounded-lg hover:bg-light-blue dark:hover:bg-gray-700 group">
                 <i class="ri-logout-box-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200"></i>
                 <span class="text-gray-700 group-hover:text-primary dark:text-gray-200">Logout</span>
             </a>
@@ -100,18 +150,19 @@
         </div>
     </div>
 
-    <div class="flex-1 ml-64 transition-all duration-300">
+    <!-- Main Content -->
+    <div class="transition-all duration-300 md:ml-64">
+        <!-- Header -->
         <header class="bg-[#FEFEFF] dark:bg-gray-800 shadow-sm sticky-header">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center py-4 md:py-6">
+                <div class="flex justify-between items-center py-4">
                     <div class="flex items-center">
-                        <button id="menuToggle" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 lg:hidden">
-                            <span class="sr-only">Open menu</span>
+                        <button id="menuToggle" class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
                             <i class="ri-menu-line text-xl"></i>
                         </button>
                     </div>
-                    <div class="flex items-center">
-                        <button id="toggleTheme" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 mr-4">
+                    <div class="flex items-center space-x-4">
+                        <button id="toggleTheme" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
                             <i class="ri-sun-line text-xl dark:text-white"></i>
                         </button>
                         <div class="relative">
@@ -129,18 +180,17 @@
             </div>
         </header>
 
-        <main class="flex-1 overflow-y-auto bg-gray-100 dark:bg-gray-900 p-4 sm:p-6 lg:p-8 content-below-header">
+        <!-- Main Content Area -->
+        <main class="flex-1 overflow-x-hidden bg-gray-100 dark:bg-gray-900 p-4 sm:p-6 lg:p-8 content-below-header">
             <div class="max-w-7xl mx-auto">
                 <!-- Overview Section -->
                 <div id="overviewSection">
                     <!-- Map Section -->
-                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 sm:p-6 mb-6">
-                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Location Overview</h2>
-                        <div id="map"></div>
-                    </div>
+                    <div id="map" class="w-full"></div>
 
                     <!-- Stats Grid -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6">
+                    <div class="pt-6 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6">
+                        <!-- Pending Tasks Card -->
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 shadow-sm">
                             <div class="flex items-center justify-between">
                                 <h3 class="text-gray-500 dark:text-gray-400 text-sm font-medium">Pending Tasks</h3>
@@ -150,6 +200,7 @@
                             <p class="text-red-600 text-sm mt-2">↑ 2 new tasks</p>
                         </div>
 
+                        <!-- Messages Card -->
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 shadow-sm">
                             <div class="flex items-center justify-between">
                                 <h3 class="text-gray-500 dark:text-gray-400 text-sm font-medium">Messages</h3>
@@ -160,7 +211,7 @@
                         </div>
                     </div>
 
-                    <!-- Location Boxes -->
+                    <!-- Location Grid -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6">
                         <!-- My Location Box -->
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 shadow-sm">
@@ -170,17 +221,17 @@
                             </div>
                             <div class="space-y-2">
                                 <p class="text-sm text-gray-600 dark:text-gray-400">
-                                    <span class="font-medium">Location:</span> New York City, USA
+                                    <span class="font-medium">Location:</span> <span id="my-location-name">Fetching...</span>
                                 </p>
                                 <p class="text-sm text-gray-600 dark:text-gray-400">
-                                    <span class="font-medium">Latitude:</span> 40.7128° N
+                                    <span class="font-medium">Latitude:</span> <span id="my-latitude">Fetching...</span>
                                 </p>
                                 <p class="text-sm text-gray-600 dark:text-gray-400">
-                                    <span class="font-medium">Longitude:</span> 74.0060° W
+                                    <span class="font-medium">Longitude:</span> <span id="my-longitude">Fetching...</span>
                                 </p>
                             </div>
                         </div>
-
+                
                         <!-- Destination Box -->
                         <div class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 shadow-sm">
                             <div class="flex items-center justify-between mb-4">
@@ -189,13 +240,13 @@
                             </div>
                             <div class="space-y-2">
                                 <p class="text-sm text-gray-600 dark:text-gray-400">
-                                    <span class="font-medium">Location:</span> Paris, France
+                                    <span class="font-medium">Location:</span> <span id="destination-location-name">N/A</span>
                                 </p>
                                 <p class="text-sm text-gray-600 dark:text-gray-400">
-                                    <span class="font-medium">Latitude:</span> 48.8566° N
+                                    <span class="font-medium">Latitude:</span> <span id="destination-latitude">N/A</span>
                                 </p>
                                 <p class="text-sm text-gray-600 dark:text-gray-400">
-                                    <span class="font-medium">Longitude:</span> 2.3522° E
+                                    <span class="font-medium">Longitude:</span> <span id="destination-longitude">N/A</span>
                                 </p>
                             </div>
                         </div>
@@ -203,124 +254,319 @@
 
                     <!-- Recent Activity Table -->
                     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
-                        <div class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
+                        <div class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700 ">
                             <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Recent Activity</h2>
                         </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                                    <tr>
-                                        <th scope="col" class="px-4 sm:px-6 py-3">Type</th>
-                                        <th scope="col" class="px-4 sm:px-6 py-3">Detected</th>
-                                        <th scope="col" class="px-4 sm:px-6 py-3">Date</th>
-                                        <th scope="col" class="px-4 sm:px-6 py-3">Priority</th>
-                                        <th scope="col" class="px-4 sm:px-6 py-3">Status</th>
-                                        <th scope="col" class="px-4 sm:px-6 py-3">Location</th>
-                                        <th scope="col" class="px-4 sm:px-6 py-3">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                                    <tr class="bg-white dark:bg-gray-800">
-                                        <td class="px-4 sm:px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                            <div class="flex items-center">
-                                                <i class="ri-file-upload-line text-primary mr-2"></i>
-                                                <span>Task Update</span>
-                                            </div>
-                                        </td>
-                                        <td class="px-4 sm:px-6 py-4">System</td>
-                                        <td class="px-4 sm:px-6 py-4">2 hours ago</td>
-                                        <td class="px-4 sm:px-6 py-4">
-                                            <span class="px-2 py-1 font-semibold leading-tight text-orange-700 bg-orange-100 rounded-full dark:bg-orange-700 dark:text-orange-100">
-                                                Medium
-                                            </span>
-                                        </td>
-                                        <td class="px-4 sm:px-6 py-4">
-                                            <span class="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
-                                                Complete
-                                            </span>
-                                        </td>
-                                        <td class="px-4 sm:px-6 py-4">New York</td>
-                                        <td class="px-4 sm:px-6 py-4">
-                                            <button class="flex items-center text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-200">
-                                                <i class="ri-eye-line mr-1"></i> View
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr class="bg-white dark:bg-gray-800">
-                                        <td class="px-4 sm:px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                            <div class="flex items-center">
-                                                <i class="ri-message-2-line text-primary mr-2"></i>
-                                                <span>New Message</span>
-                                            </div>
-                                        </td>
-                                        <td class="px-4 sm:px-6 py-4">User</td>
-                                        <td class="px-4 sm:px-6 py-4">1 day ago</td>
-                                        <td class="px-4 sm:px-6 py-4">
-                                            <span class="px-2 py-1 font-semibold leading-tight text-red-700 bg-red-100 rounded-full dark:bg-red-700 dark:text-red-100">
-                                                High
-                                            </span>
-                                        </td>
-                                        <td class="px-4 sm:px-6 py-4">
-                                            <span class="px-2 py-1 font-semibold leading-tight text-yellow-700 bg-yellow-100 rounded-full dark:bg-yellow-700 dark:text-yellow-100">
-                                                Pending
-                                            </span>
-                                        </td>
-                                        <td class="px-4 sm:px-6 py-4">Paris</td>
-                                        <td class="px-4 sm:px-6 py-4">
-                                            <button class="flex items-center text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-200">
-                                                <i class="ri-eye-line mr-1"></i> View
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                
+                        <!-- Table Container with Mobile Slider -->
+                        <div class="relative">
+                            <!-- Table Container -->
+                            <div class="overflow-x-auto">
+                                <div id="tableScrollContainer" class="min-w-full scrollbar-hide">
+                                    <table id="rescueTable" class="w-full text-sm text-left text-gray-500 dark:text-gray-400 ">
+                                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                            <tr>
+                                                <th scope="col" class="px-4 sm:px-6 py-3 whitespace-nowrap">LOCATION</th>
+                                                <th scope="col" class="px-4 sm:px-6 py-3 whitespace-nowrap">LATTITUDE,LONGITUDE</th>
+                                                <th scope="col" class="px-4 sm:px-6 py-3 whitespace-nowrap">DETECTED</th>
+                                                <th scope="col" class="px-4 sm:px-6 py-3 whitespace-nowrap">TIME</th>
+                                                <th scope="col" class="px-4 sm:px-6 py-3 whitespace-nowrap">STATUS</th>
+                                                <th scope="col" class="px-4 sm:px-6 py-3 whitespace-nowrap">CHANGE STATUS</th>
+                                                <th scope="col" class="px-4 sm:px-6 py-3 whitespace-nowrap">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                                            <!-- Table rows will be dynamically generated here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                
+                            <!-- Mobile Slider -->
+                            <div class="sm:hidden mt-4 px-4">
+                                <input
+                                    type="range"
+                                    id="tableSlider"
+                                    min="0"
+                                    max="100"
+                                    value="0"
+                                    class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+                                >
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Messages Section -->
-                <div id="messagesSection" class="hidden">
-                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
-                        <div class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
-                            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Messages</h2>
-                        </div>
-                        <div class="p-4 sm:p-6">
-                            <div id="messageList" class="space-y-4 h-[calc(100vh-300px)] overflow-y-auto">
-                                <!-- Messages will be dynamically inserted here -->
-                            </div>
-                            <div class="mt-4">
-                                <form id="messageForm" class="flex items-center space-x-2">
-                                    <input
-                                        type="text"
-                                        id="messageInput"
-                                        placeholder="Type your message..."
-                                        class="flex-1 p-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white"
-                                    />
-                                    <button type="submit" class="bg-primary text-white p-2 rounded-lg hover:bg-primary-hover">
-                                        <i class="ri-send-plane-fill"></i>
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </main>
     </div>
 
     <script>
+        const tableBody = document.querySelector('#rescueTable tbody');
+        const myLocationName = document.getElementById('my-location-name');
+        const myLatitude = document.getElementById('my-latitude');
+        const myLongitude = document.getElementById('my-longitude');
+        const destinationLocationName = document.getElementById('destination-location-name');
+        const destinationLatitude = document.getElementById('destination-latitude');
+        const destinationLongitude = document.getElementById('destination-longitude');
+
+        const map = L.map('map').setView([20, 0], 2);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        const currentLocationIcon = L.divIcon({
+            html: `<svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                <title>my_location</title>
+                <desc>Created with Sketch.</desc>
+                <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                    <g id="Rounded" transform="translate(-169.000000, -3211.000000)">
+                        <g id="Maps" transform="translate(100.000000, 3068.000000)">
+                            <g id="-Round-/-Maps-/-my_location" transform="translate(68.000000, 142.000000)">
+                                <g>
+                                    <polygon id="Path" points="0 0 24 0 24 24 0 24"></polygon>
+                                    <path d="M12,8 C9.79,8 8,9.79 8,12 C8,14.21 9.79,16 12,16 C14.21,16 16,14.21 16,12 C16,9.79 14.21,8 12,8 Z M20.94,11 C20.48,6.83 17.17,3.52 13,3.06 L13,2 C13,1.45 12.55,1 12,1 C11.45,1 11,1.45 11,2 L11,3.06 C6.83,3.52 3.52,6.83 3.06,11 L2,11 C1.45,11 1,11.45 1,12 C1,12.55 1.45,13 2,13 L3.06,13 C3.52,17.17 6.83,20.48 11,20.94 L11,22 C11,22.55 11.45,23 12,23 C12.55,23 13,22.55 13,22 L13,20.94 C17.17,20.48 20.48,17.17 20.94,13 L22,13 C22.55,13 23,12.55 23,12 C23,11.45 22.55,11 22,11 L20.94,11 Z M12,19 C8.13,19 5,15.87 5,12 C5,8.13 8.13,5 12,5 C15.87,5 19,8.13 19,12 C19,15.87 15.87,19 12,19 Z" id="🔹-Icon-Color" fill="#1D1D1D"></path>
+                                </g>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </svg>`,
+            className: '',
+            iconSize: [22, 22],
+            iconAnchor: [11, 11]
+        });
+
+        const destinationIcon = L.divIcon({
+            html: `<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><defs><style>.cls-1{fill:#2d3e50;}.cls-2{fill:#2e79bd;}</style></defs><title>b</title><path class="cls-1" d="M64.00178,3.36652c-25.74943,0-43.04956,14.75866-43.04956,36.7246,0,29.11223,37.01485,81.60069,37.38345,82.01113a7.60318,7.60318,0,0,0,11.3233.00579c.37394-.41623,37.3888-52.90469,37.3888-82.01692C107.04778,18.12518,89.74853,3.36652,64.00178,3.36652ZM64,74.73868a28.29593,28.29593,0,1,1,28.296-28.296A28.29592,28.29592,0,0,1,64,74.73868Z"></path><path class="cls-2" d="M82.84186,58.57151c-.155.24618-.31.4741-.4741.71116a22.39884,22.39884,0,0,1-36.73256.00913c-.17323-.23705-.33733-.48323-.48323-.72935.01825-.12765.0365-.24618.0547-.3647a4.03615,4.03615,0,0,1,2.16079-2.90834c3.76529-1.87811,12.00714-4.6406,12.00714-4.6406v-2.726l-.22793-.17323a7.86155,7.86155,0,0,1-2.99042-5.00525l-.04557-.29175h-.2188a3.02492,3.02492,0,0,1-2.81719-1.88724,3.275,3.275,0,0,1-.41935-1.61368,3.1367,3.1367,0,0,1,.20967-1.12143,1.58361,1.58361,0,0,1,.61083-.9846l.76586-.45585-.18235-.82056c-1.34018-5.86225,3.04512-11.141,9.06235-11.51483a.5194.5194,0,0,1,.11853-.00913c.10027-.00913.20055-.0182.30088-.0182h.9117c.10027,0,.20055.00907.30082.0182a.51916.51916,0,0,1,.11853.00913c6.02641.37383,10.41171,5.65258,9.07147,11.51483l-.19148.82056.76586.45585a1.54549,1.54549,0,0,1,.61083.9846,3.14584,3.14584,0,0,1,.2188,1.12143,3.37534,3.37534,0,0,1-.41935,1.61368,3.02486,3.02486,0,0,1-2.81719,1.88724h-.2188l-.0547.29175a7.81113,7.81113,0,0,1-2.98129,5.00525l-.22793.17323v2.726s8.24185,2.76249,11.99806,4.6406a4.01318,4.01318,0,0,1,2.16074,2.90834C82.80541,58.31626,82.82361,58.44391,82.84186,58.57151Z"></path></svg>`,
+            className: '',
+            iconSize: [32, 32],
+            iconAnchor: [16, 32]
+        });
+
+        let currentLocationMarker;
+        let destinationMarker;
+        let routeLayer;
+
+        function fetchAndUpdateTable() {
+            fetch('/rescue/update_rescue_table/')
+            .then(response => response.json())
+            .then(data => {
+                tableBody.innerHTML = ''; // Clear the existing table rows
+                if (data.status === 'success') {
+                    if (data.rescue_details.length === 0) {
+                        const emptyRow = document.createElement('tr');
+                        emptyRow.innerHTML = `
+                            <td colspan="7" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-center">
+                                <div class="flex flex-col items-center justify-center py-6">
+                                    <svg class="w-12 h-12 text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+                                    </svg>
+                                    <span class="font-medium">No data available</span>
+                                </div>
+                            </td>
+                        `;
+                        tableBody.appendChild(emptyRow);
+                    } else {
+                        data.rescue_details.forEach(record => {
+                            const row = document.createElement('tr');
+                            row.className = 'bg-white dark:bg-gray-800';
+                            row.innerHTML = `
+                                <td class="px-4 sm:px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    <div class="flex items-center">
+                                        <i class="ri-user-location-fill text-primary mr-2"></i>
+                                        <span>${record.town_name}</span>
+                                    </div>
+                                </td>
+                                <td class="px-4 sm:px-6 py-4 whitespace-nowrap">${record.latitude}, ${record.longitude}</td>
+                                <td class="px-4 sm:px-6 py-4 whitespace-nowrap">${record.detected_count}</td>
+                                <td class="px-4 sm:px-6 py-4 whitespace-nowrap"><span>${new Date(record.created_at).toLocaleString()}</span></td>
+                                <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 py-1 font-semibold leading-tight ${record.status === 'Completed' ? 'text-green-700 bg-green-100 dark:bg-green-700 dark:text-green-100' : 'text-amber-700 bg-amber-100 dark:bg-yellow-700 dark:text-amber-100'} rounded-full">
+                                        ${record.status}
+                                    </span>
+                                </td>
+                                <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
+                                    <button class="status-button rounded-md ${record.status === 'Completed' ? 'bg-green-600' : 'bg-amber-600'} py-1 px-4 text-xs border border-transparent text-center text-white transition-all shadow-md hover:shadow-lg focus:${record.status === 'Completed' ? 'bg-green-700' : 'bg-amber-700'} focus:shadow-none active:${record.status === 'Completed' ? 'bg-green-700' : 'bg-amber-700'} hover:${record.status === 'Completed' ? 'bg-green-700' : 'bg-amber-700'} active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2" type="button" data-id="${record.id}">
+                                        ${record.status}
+                                    </button>
+                                </td>
+                                <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
+                                    <button class="view-button flex items-center text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-200" data-location="${record.location_name}" data-latitude="${record.latitude}" data-longitude="${record.longitude}">
+                                        <i class="ri-eye-line mr-1"></i> View
+                                    </button>
+                                </td>
+                            `;
+                            tableBody.appendChild(row);
+
+                            // Add event listener to the status button
+                            const statusButton = row.querySelector('.status-button');
+                            statusButton.addEventListener('click', () => {
+                                const currentStatus = statusButton.textContent.trim();
+                                const newStatus = currentStatus === 'Completed' ? 'Pending' : 'Completed';
+                                const rescueId = statusButton.getAttribute('data-id');
+
+                                // Send the updated status to the server
+                                fetch(`/rescue/update_complete_and_pending/${rescueId}`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/x-www-form-urlencoded',
+                                        'X-CSRFToken': getCookie('csrftoken')
+                                    },
+                                    body: new URLSearchParams({ new_status: newStatus })
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.status === 'success') {
+                                        statusButton.textContent = newStatus;
+                                        if (newStatus === 'Completed') {
+                                            statusButton.classList.remove('bg-amber-600', 'focus:bg-amber-700', 'hover:bg-amber-700');
+                                            statusButton.classList.add('bg-green-600', 'focus:bg-green-700', 'hover:bg-green-700');
+                                        } else {
+                                            statusButton.classList.remove('bg-green-600', 'focus:bg-green-700', 'hover:bg-green-700');
+                                            statusButton.classList.add('bg-amber-600', 'focus:bg-amber-700', 'hover:bg-amber-700');
+                                        }
+                                    } else {
+                                        console.error('Error updating status:', data.message);
+                                    }
+                                })
+                                .catch(error => console.error('Error updating status:', error));
+                            });
+
+                            // Add event listener to the view button
+                            const viewButton = row.querySelector('.view-button');
+                            viewButton.addEventListener('click', () => {
+                                destinationLocationName.textContent = viewButton.getAttribute('data-location');
+                                destinationLatitude.textContent = viewButton.getAttribute('data-latitude');
+                                destinationLongitude.textContent = viewButton.getAttribute('data-longitude');
+
+                                // Update the map with the route
+                                const myLat = parseFloat(myLatitude.textContent);
+                                const myLong = parseFloat(myLongitude.textContent);
+                                const destLat = parseFloat(viewButton.getAttribute('data-latitude'));
+                                const destLong = parseFloat(viewButton.getAttribute('data-longitude'));
+
+                                if (routeLayer) {
+                                    map.removeLayer(routeLayer);
+                                }
+
+                                if (destinationMarker) {
+                                    map.removeLayer(destinationMarker);
+                                }
+
+                                destinationMarker = L.marker([destLat, destLong], { icon: destinationIcon }).addTo(map);
+
+                                fetch(`https://router.project-osrm.org/route/v1/driving/${myLong},${myLat};${destLong},${destLat}?overview=full&geometries=geojson`)
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        const route = data.routes[0].geometry;
+                                        routeLayer = L.geoJSON(route).addTo(map);
+                                        map.fitBounds(routeLayer.getBounds());
+                                    })
+                                    .catch(error => console.error('Error fetching route:', error));
+                            });
+                        });
+                    }
+                } else {
+                    console.error('Error fetching table data:', data.message);
+                }
+            })
+            .catch(error => console.error('Error fetching table data:', error)); 
+        } 
+
+        // Helper function to get CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Function to update current location
+        function updateCurrentLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.watchPosition(position => {
+                    const lat = position.coords.latitude;
+                    const long = position.coords.longitude;
+
+                    myLatitude.textContent = `${lat.toFixed(4)}`;
+                    myLongitude.textContent = `${long.toFixed(4)}`;
+
+                    if (currentLocationMarker) {
+                        currentLocationMarker.setLatLng([lat, long]);
+                    } else {
+                        currentLocationMarker = L.marker([lat, long], { icon: currentLocationIcon }).addTo(map);
+                    }
+
+                    // Use a geocoding service to get the location name from latitude and longitude
+                    fetch(`https://geocode.xyz/${lat},${long}?geoit=json`)
+                        .then(response => response.json())
+                        .then(data => {
+                            myLocationName.textContent = data.city ? `${data.city}, ${data.country}` : 'Unknown';
+                        })
+                        .catch(error => {
+                            console.error('Error fetching location name:', error);
+                            myLocationName.textContent = 'Unknown';
+                        });
+                });
+            } else {
+                myLocationName.textContent = 'Geolocation is not supported by this browser.';
+                myLatitude.textContent = 'N/A';
+                myLongitude.textContent = 'N/A';
+            }
+        }
+
+        // Initial fetch and update
+        fetchAndUpdateTable();
+        updateCurrentLocation();
+
+        // Poll every 3 seconds
+        setInterval(fetchAndUpdateTable, 3000);
+
+        // DOM Elements
         const navbar = document.getElementById('navbar');
         const toggleSidebar = document.getElementById('toggleSidebar');
         const menuToggle = document.getElementById('menuToggle');
+        const closeMobileSidebar = document.getElementById('closeMobileSidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
         const toggleTheme = document.getElementById('toggleTheme');
         const html = document.documentElement;
-        const mainContent = document.querySelector('.ml-64');
+        const mainContent = document.querySelector('.md\\:ml-64');
 
+        // Mobile menu handlers
+        function openMobileMenu() {
+            navbar.classList.add('mobile-open');
+            sidebarOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMobileMenu() {
+            navbar.classList.remove('mobile-open');
+            sidebarOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        menuToggle.addEventListener('click', openMobileMenu);
+        closeMobileSidebar.addEventListener('click', closeMobileMenu);
+        sidebarOverlay.addEventListener('click', closeMobileMenu);
+
+        // Desktop sidebar toggle
         toggleSidebar.addEventListener('click', () => {
             navbar.classList.toggle('w-20');
             navbar.classList.toggle('w-64');
-            mainContent.classList.toggle('ml-20');
-            mainContent.classList.toggle('ml-64');
+            mainContent.classList.toggle('md:ml-20');
+            mainContent.classList.toggle('md:ml-64');
+            
             const isCollapsed = navbar.classList.contains('w-20');
             document.querySelectorAll('#navbar span, #navbar h2, #navbar .ml-3').forEach(el => {
                 el.style.display = isCollapsed ? 'none' : 'block';
@@ -328,10 +574,7 @@
             document.querySelector('#navbar input').placeholder = isCollapsed ? '' : 'Search';
         });
 
-        menuToggle.addEventListener('click', () => {
-            navbar.classList.toggle('-translate-x-full');
-        });
-
+        // Theme toggle
         toggleTheme.addEventListener('click', () => {
             html.classList.toggle('dark');
             const isDark = html.classList.contains('dark');
@@ -350,96 +593,44 @@
         const isDark = html.classList.contains('dark');
         toggleTheme.innerHTML = isDark ? '<i class="ri-moon-line text-xl text-white"></i>' : '<i class="ri-sun-line text-xl"></i>';
 
-        // Initialize Leaflet map
-        const map = L.map('map').setView([20, 0], 2);
+    
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
+    
 
-        const locations = [
-            { coords: [40.7128, -74.0060], label: 'New York City, USA' },
-            { coords: [48.8566, 2.3522], label: 'Paris, France' },
-            { coords: [35.6762, 139.6503], label: 'Tokyo, Japan' }
-        ];
+         // Table slider functionality for mobile
+    const tableSlider = document.getElementById('tableSlider');
+    const tableScrollContainer = document.getElementById('tableScrollContainer');
 
-        locations.forEach(location => {
-            L.marker(location.coords)
-                .addTo(map)
-                .bindPopup(`<b>${location.label}</b>`)
-                .openPopup();
+    if (tableSlider && tableScrollContainer) {
+        // Update slider position when table is scrolled
+        tableScrollContainer.addEventListener('scroll', () => {
+            const scrollPercentage = (tableScrollContainer.scrollLeft / (tableScrollContainer.scrollWidth - tableScrollContainer.clientWidth)) * 100;
+            tableSlider.value = scrollPercentage;
         });
 
-        // View switching
-        const overviewBtn = document.getElementById('overviewBtn');
-        const messagesBtn = document.getElementById('messagesBtn');
-        const overviewSection = document.getElementById('overviewSection');
-        const messagesSection = document.getElementById('messagesSection');
+        // Update table scroll position when slider is moved
+        tableSlider.addEventListener('input', (e) => {
+            const scrollWidth = tableScrollContainer.scrollWidth - tableScrollContainer.clientWidth;
+            const scrollPosition = (scrollWidth * e.target.value) / 100;
+            tableScrollContainer.scrollLeft = scrollPosition;
+        });
 
-        overviewBtn.addEventListener('click', () => {
-            overviewSection.classList.remove('hidden');
-            messagesSection.classList.add('hidden');
-            overviewBtn.classList.add('bg-primary', 'text-white');
-            overviewBtn.classList.remove('hover:bg-light-blue', 'dark:hover:bg-gray-700');
-            messagesBtn.classList.remove('bg-primary', 'text-white');
-            messagesBtn.classList.add('hover:bg-light-blue', 'dark:hover:bg-gray-700');
-            if (window.innerWidth < 768) {
-                navbar.classList.add('-translate-x-full');
+        // Update slider max value based on table width
+        function updateSliderMaxValue() {
+            const scrollWidth = tableScrollContainer.scrollWidth;
+            const clientWidth = tableScrollContainer.clientWidth;
+            
+            if (scrollWidth > clientWidth) {
+                tableSlider.style.display = 'block';
+            } else {
+                tableSlider.style.display = 'none';
             }
-        });
-
-        messagesBtn.addEventListener('click', () => {
-            overviewSection.classList.add('hidden');
-            messagesSection.classList.remove('hidden');
-            messagesBtn.classList.add('bg-primary', 'text-white');
-            messagesBtn.classList.remove('hover:bg-light-blue', 'dark:hover:bg-gray-700');
-            overviewBtn.classList.remove('bg-primary', 'text-white');
-            overviewBtn.classList.add('hover:bg-light-blue', 'dark:hover:bg-gray-700');
-            if (window.innerWidth < 768) {
-                navbar.classList.add('-translate-x-full');
-            }
-        });
-
-        // Messages functionality
-        const messageList = document.getElementById('messageList');
-        const messageForm = document.getElementById('messageForm');
-        const messageInput = document.getElementById('messageInput');
-
-        const messages = [
-            { sender: 'Jane Doe', content: "Hey, just wanted to check in on the project status. How's it going?", timestamp: '2 hours ago' },
-            { sender: 'You', content: "Hi Jane, thanks for checking in. The project is progressing well. We're currently in the testing phase and should be ready for the final review next week.", timestamp: '1 hour ago' },
-        ];
-
-        function renderMessages() {
-            messageList.innerHTML = messages.map(message => `
-                <div class="flex items-start space-x-4 ${message.sender === 'You' ? 'justify-end' : ''}">
-                    ${message.sender !== 'You' ? `<img src="https://via.placeholder.com/40" alt="User Avatar" class="w-10 h-10 rounded-full">` : ''}
-                    <div class="${message.sender === 'You' ? 'bg-primary text-white' : 'bg-gray-100 dark:bg-gray-700'} rounded-lg p-3 max-w-[70%]">
-                        <p class="text-sm font-medium">${message.sender}</p>
-                        <p class="text-sm">${message.content}</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">${message.timestamp}</p>
-                    </div>
-                    ${message.sender === 'You' ? `<img src="https://via.placeholder.com/40" alt="Your Avatar" class="w-10 h-10 rounded-full">` : ''}
-                </div>
-            `).join('');
         }
 
-        messageForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            if (messageInput.value.trim()) {
-                messages.push({
-                    sender: 'You',
-                    content: messageInput.value,
-                    timestamp: 'Just now'
-                });
-                messageInput.value = '';
-                renderMessages();
-                messageList.scrollTop = messageList.scrollHeight;
-            }
-        });
-
-        renderMessages();
+        // Update on load and resize
+        updateSliderMaxValue();
+        window.addEventListener('resize', updateSliderMaxValue);
+    }
     </script>
 </body>
 </html>
-

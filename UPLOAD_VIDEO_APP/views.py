@@ -391,8 +391,11 @@ def download_video(request, video_id=None):
 #     return JsonResponse(data=data)
 @login_required(login_url='login')
 def get_recent_data(request):
-    processed_videos = ProcessedVideo.objects.filter(user=request.user).values(
-        'id','video_name', 'created_at', 'total_persons_detected', 'status', 'output_video_path'
+    processed_videos = ProcessedVideo.objects.filter(
+        user=request.user,
+        created_at__date=date.today()
+    ).values(
+        'id', 'video_name', 'created_at', 'total_persons_detected', 'status', 'output_video_path'
     )
     data = list(processed_videos)
     return JsonResponse({"current_data": data})

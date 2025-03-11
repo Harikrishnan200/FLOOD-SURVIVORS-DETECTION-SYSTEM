@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'ADMIN_APP',
     'UPLOAD_VIDEO_APP',
     'RESCUE_APP',
-    'GPS_LOCATION'
+    'GPS_LOCATION',
+    'VOLUNTEERS'
 ]
 
 

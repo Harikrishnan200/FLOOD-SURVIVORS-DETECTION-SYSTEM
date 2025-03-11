@@ -27,6 +27,7 @@ urlpatterns = [
     path('rescue/', include('RESCUE_APP.urls')),
     path('gps/', include('GPS_LOCATION.urls')),
     path('video_upload/', include('UPLOAD_VIDEO_APP.urls')),
+    path('volunteers/', include('VOLUNTEERS.urls')),
 
 
 ]

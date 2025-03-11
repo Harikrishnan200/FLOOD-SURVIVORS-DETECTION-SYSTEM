@@ -1,4 +1,4 @@
-{% comment %} <div id="navbar" class="h-screen bg-[#FEFEFF] dark:bg-gray-800 transition-all duration-300 w-64 flex flex-col fixed left-0 top-0 z-50">
+<!-- {% comment %} <div id="navbar" class="h-screen bg-[#FEFEFF] dark:bg-gray-800 transition-all duration-300 w-64 flex flex-col fixed left-0 top-0 z-50">
     <div class="flex items-center justify-between p-4">
         <h2 class="text-xl font-semibold dark:text-white">FloodTrace</h2>
         <button id="toggleSidebar" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
@@ -64,7 +64,7 @@
             </div>
         </div>
     </div>
-</div> {% endcomment %}
+</div> {% endcomment %} -->
 
 <!-- Navbar HTML -->
 <!-- <div id="navbar" class="h-screen bg-[#FEFEFF] dark:bg-gray-800 transition-all duration-300 w-64 flex flex-col fixed left-0 top-0 z-50">
@@ -239,6 +239,14 @@
                     <i class="ri-history-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white"></i>
                     <span class="text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white">Previous Data</span>
                 </a>
+                <a href="{% url 'add_users' %}" class="flex items-center p-2 rounded-lg hover:bg-light-violet dark:hover:bg-gray-700 group navbar-button">
+                    <i class="ri-user-add-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white"></i>
+                    <span class="text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white">Add Users</span>
+                </a>
+                <a href="{% url 'manage_volunteers' %}" class="flex items-center p-2 rounded-lg hover:bg-light-violet dark:hover:bg-gray-700 group navbar-button">
+                    <i class="ri-team-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white"></i>
+                    <span class="text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white">Volunteers</span>
+                </a>
                 <a href="{% url 'user_profile' %}" class="flex items-center p-2 rounded-lg hover:bg-light-violet dark:hover:bg-gray-700 group navbar-button">
                     <i class="ri-user-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white"></i>
                     <span class="text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white">User</span>
@@ -259,6 +267,10 @@
         <a href="#" class="flex items-center p-2 rounded-lg hover:bg-light-violet dark:hover:bg-gray-700 group navbar-button">
             <i class="ri-settings-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white"></i>
             <span class="text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white">Settings</span>
+        </a>
+        <a href="{% url 'logout' %}" class="flex items-center p-2 rounded-lg hover:bg-light-blue dark:hover:bg-gray-700 group">
+            <i class="ri-logout-box-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200"></i>
+            <span class="text-gray-700 group-hover:text-primary dark:text-gray-200">Logout</span>
         </a>
     </div>
 
@@ -291,7 +303,7 @@
             }
         });
     });
+    
 </script>
-
 
 

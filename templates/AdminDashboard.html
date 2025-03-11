@@ -64,7 +64,85 @@
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 flex">
     
-    {% include 'Admin-navbar.html' %}
+    <div id="navbar" class="h-screen bg-[#FEFEFF] dark:bg-gray-800 transition-all duration-300 w-64 flex flex-col fixed left-0 top-0 z-50">
+        <div class="flex items-center justify-between p-4">
+            <h2 class="text-xl font-semibold dark:text-white">FloodTrace</h2>
+            <button id="toggleSidebar" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                <i class="ri-menu-line text-xl dark:text-white"></i>
+            </button>
+        </div>
+    
+        <div class="flex-1 px-3 py-4 space-y-1">
+            <div class="relative">
+                <i class="ri-search-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                <input type="text" placeholder="Search" class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
+            </div>
+    
+            <div class="space-y-1">
+                <button id="dashboardDropdown" class="w-full flex items-center p-2 rounded-lg bg-primary-hover text-white dark:bg-gray-700 group">
+                    <i class="ri-dashboard-line text-xl mr-3"></i>
+                    <span>Dashboard</span>
+                    <i class="ri-arrow-down-s-line ml-auto transition-transform duration-300"></i>
+                </button>
+              
+                <div id="dashboardMenu" class="pl-6 space-y-1 overflow-hidden transition-all duration-300 max-h-0">
+                    <a href="{% url 'dashboard' %}" class="flex items-center p-2 rounded-lg hover:bg-light-violet dark:bg-gray-700 group navbar-button">
+                        <i class="ri-bar-chart-box-line text-xl mr-3 text-primary dark:text-white"></i>
+                        <span class="text-primary dark:text-white">Real-Time</span>
+                    </a>
+                    <a href="{% url 'upload_video' %}" class="flex items-center p-2 rounded-lg hover:bg-light-violet dark:hover:bg-gray-700 group navbar-button">
+                        <i class="ri-video-upload-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white"></i>
+                        <span class="text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white">Upload Video</span>
+                    </a>
+                    <a href="{% url 'previous_data' %}" class="flex items-center p-2 rounded-lg hover:bg-light-violet dark:hover:bg-gray-700 group navbar-button">
+                        <i class="ri-history-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white"></i>
+                        <span class="text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white">Previous Data</span>
+                    </a>
+                    <a href="{% url 'add_users' %}" class="flex items-center p-2 rounded-lg hover:bg-light-violet dark:hover:bg-gray-700 group navbar-button">
+                        <i class="ri-user-add-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white"></i>
+                        <span class="text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white">Add Users</span>
+                    </a>
+                    <a href="{% url 'manage_volunteers' %}" class="flex items-center p-2 rounded-lg hover:bg-light-violet dark:hover:bg-gray-700 group navbar-button">
+                        <i class="ri-team-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white"></i>
+                        <span class="text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white">Volunteers</span>
+                    </a>
+                    <a href="{% url 'user_profile' %}" class="flex items-center p-2 rounded-lg hover:bg-light-violet dark:hover:bg-gray-700 group navbar-button">
+                        <i class="ri-user-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white"></i>
+                        <span class="text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white">User</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    
+        <div class="px-3 py-4 space-y-1">
+            <a href="#" class="flex items-center p-2 rounded-lg hover:bg-light-violet dark:hover:bg-gray-700 group navbar-button">
+                <i class="ri-notification-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white"></i>
+                <span class="text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white">Notifications</span>
+            </a>
+            <a href="#" class="flex items-center p-2 rounded-lg hover:bg-light-violet dark:hover:bg-gray-700 group navbar-button">
+                <i class="ri-question-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white"></i>
+                <span class="text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white">Support</span>
+            </a>
+            <a href="#" class="flex items-center p-2 rounded-lg hover:bg-light-violet dark:hover:bg-gray-700 group navbar-button">
+                <i class="ri-settings-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white"></i>
+                <span class="text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white">Settings</span>
+            </a>
+            <a href="{% url 'logout' %}" class="flex items-center p-2 rounded-lg hover:bg-light-blue dark:hover:bg-gray-700 group">
+                <i class="ri-logout-box-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200"></i>
+                <span class="text-gray-700 group-hover:text-primary dark:text-gray-200">Logout</span>
+            </a>
+        </div>
+    
+        <div class="p-4 mt-auto border-t border-gray-200 dark:border-gray-700">
+            <div class="flex items-center">
+                <img src="https://via.placeholder.com/40" alt="User" class="w-10 h-10 rounded-full">
+                <div class="ml-3">
+                    <p class="text-sm font-medium text-gray-700 dark:text-gray-200">Anita Cruz</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">anita@untitledui.com</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="flex-1 ml-64 transition-all duration-300">
        
@@ -150,14 +228,14 @@
                 <div class="overflow-hidden rounded-lg shadow-md">
                     <h3 class="text-xl font-semibold mb-4 dark:text-white p-4 bg-[#FEFEFF] dark:bg-gray-800">Data Table</h3>
                     <div class="table-container">
-                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 table-slide">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 table-slide" id="location-data-table">
                             <thead class="bg-gray-50 dark:bg-gray-700">
                                 <tr>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                         Time
                                     </th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                        Count
+                                        DETECTED
                                     </th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                         Location
@@ -171,87 +249,100 @@
                                 </tr>
                             </thead>
                             <tbody class="bg-[#FEFEFF] dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">2023-05-15 09:30:00</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">5</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">New York, USA</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                                        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-xs">
-                                            View
-                                        </button>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                            Active
-                                        </span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">2023-05-15 10:15:00</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">3</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">London, UK</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                                        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-xs">
-                                            View
-                                        </button>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                            Warning
-                                        </span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">2023-05-15 11:00:00</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">7</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">Tokyo, Japan</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                                        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-xs">
-                                            View
-                                        </button>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                            Critical
-                                        </span>
-                                    </td>
-                                </tr>
+                                <!-- Dynamic rows will be inserted here -->
                             </tbody>
                         </table>
                     </div>
                 </div>
+
+
+
             </div>
         </main>
     </div>
     <script src="{% static 'JS/scripts.js' %}"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        const dashboardDropdown = document.getElementById('dashboardDropdown');
+        const dashboardMenu = document.getElementById('dashboardMenu');
+        const arrowIcon = dashboardDropdown.querySelector('.ri-arrow-down-s-line');
+        let isOpen = false;
+
+        dashboardDropdown.addEventListener('click', function() {
+            isOpen = !isOpen;
+            if (isOpen) {
+                dashboardMenu.style.maxHeight = dashboardMenu.scrollHeight + 'px';
+                arrowIcon.style.transform = 'rotate(180deg)';
+            } else {
+                dashboardMenu.style.maxHeight = '0';
+                arrowIcon.style.transform = 'rotate(0)';
+            }
+        });
+    });
+    
         
-
-        // Initialize Leaflet map
-        const map = L.map('map').setView([20, 0], 2);
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-
-        const locations = [
-            { coords: [40.7128, -74.0060], label: 'New York City, USA' },
-            { coords: [48.8566, 2.3522], label: 'Paris, France' },
-            { coords: [35.6762, 139.6503], label: 'Tokyo, Japan' }
-        ];
-
-        const polylineCoords = [];
-
-        locations.forEach(location => {
-            L.marker(location.coords)
-                .addTo(map)
-                .bindPopup(`<b>${location.label}</b>`)
-                .openPopup();
-
-            polylineCoords.push(location.coords);
+        // Initialize map variables
+        let map;
+        let locationMarker;
+        let polyline;
+        let pathCoordinates = [];
+        const locationIcon = L.icon({
+            iconUrl: 'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/images/marker-icon.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowUrl: 'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/images/marker-shadow.png',
+            shadowSize: [41, 41]
         });
 
-        L.polyline(polylineCoords, { color: 'blue' }).addTo(map);
+        // Initialize Leaflet map
+        function initMap() {
+            // Set default view to a world-level zoom (will be updated with real coordinates)
+            map = L.map('map').setView([20, 0], 2);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            // Initialize empty polyline
+            polyline = L.polyline([], { color: 'blue', weight: 3 }).addTo(map);
+        }
+
+        // Function to update map with new coordinates
+        function updateMapLocation(latitude, longitude) {
+            // Return early if the coordinates are not valid numbers
+            if (isNaN(parseFloat(latitude)) || isNaN(parseFloat(longitude))) {
+                console.log('Invalid coordinates received:', latitude, longitude);
+                return;
+            }
+            
+            const coordinates = [parseFloat(latitude), parseFloat(longitude)];
+            
+            // Add to path coordinates array
+            pathCoordinates.push(coordinates);
+            
+            // Update polyline with new coordinates
+            polyline.setLatLngs(pathCoordinates);
+            
+            // Remove existing marker if exists
+            if (locationMarker) {
+                map.removeLayer(locationMarker);
+            }
+            
+            // Add new marker at current location
+            locationMarker = L.marker(coordinates, { icon: locationIcon })
+                .addTo(map)
+                .bindPopup(`<b>Current Location</b><br>Lat: ${latitude}, Lng: ${longitude}`)
+                .openPopup();
+            
+            // Adjust map view to see the current location
+            // Only zoom to fit if we have multiple points
+            if (pathCoordinates.length > 1) {
+                map.fitBounds(polyline.getBounds());
+            } else {
+                map.setView(coordinates, 13); // Zoom level 13 for single point
+            }
+        }
 
         // Function to get CSRF token
         function getCsrfToken() {
@@ -311,9 +402,6 @@
                 videoContainer.appendChild(imgElement);
             } else {
                 videoFeed.src = `/admin/video_feed/?ip_cam_url=${encodeURIComponent(ipCamUrl)}`;
-                
-                
-                
             }
 
             if (noVideoMessage) {
@@ -325,62 +413,210 @@
     }
     
     
-    // Function to fetch and update the unique person count
+    // Function to fetch and update the unique person count and location data
+        // Function to fetch and update the unique person count and location data
     function updateUniquePersonCount() {
-    // Fetch data from the updated endpoint
-    fetch('/admin/get_unique_person_count/')
-        .then(response => response.json())
-        .then(data => {
-            // Update the unique person count
-            document.getElementById('uniquePersonCount').innerText = data.unique_person_count;
+        // Fetch data from the updated endpoint
+        fetch('/admin/get_unique_person_count/')
+            .then(response => response.json())
+            .then(data => {
+                // Update the unique person count
+                document.getElementById('uniquePersonCount').innerText = data.unique_person_count;
 
-            // Update the location data
-            const latitude = data.latitude || 'N/A';
-            const longitude = data.longitude || 'N/A';
-            const locationText = `${latitude}, ${longitude}`;
+                // Update the location data
+                const latitude = data.latitude || 'N/A';
+                const longitude = data.longitude || 'N/A';
+                const locationText = `${latitude}, ${longitude}`;
 
-            document.getElementById('myLocation').innerHTML = `<span class="font-medium">Location:</span> ${locationText}`;
-            document.getElementById('myLocationLatitude').innerHTML = `<span class="font-medium">Latitude:</span> ${latitude}`;
-            document.getElementById('myLocationLongitude').innerHTML = `<span class="font-medium">Longitude:</span> ${longitude}`;
-        })
-        .catch(error => console.error('Error fetching data:', error));
-}
+                document.getElementById('myLocation').innerHTML = `<span class="font-medium">Location:</span> ${locationText}`;
+                document.getElementById('myLocationLatitude').innerHTML = `<span class="font-medium">Latitude:</span> ${latitude}`;
+                document.getElementById('myLocationLongitude').innerHTML = `<span class="font-medium">Longitude:</span> ${longitude}`;
 
-    
+                // Update map with the new location data if valid coordinates are available
+                if (latitude !== 'N/A' && longitude !== 'N/A') {
+                    updateMapLocation(latitude, longitude);
+                }
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    }
+
+    // Call handleVideoDisplay when the page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize the map
+        initMap();
+        
+        const ipCamUrl = ''; // Initialize with an empty string
+        handleVideoDisplay(ipCamUrl);
+        
+        // Start polling for location data
+        setInterval(updateUniquePersonCount, 5000); // Update every 5 seconds
+    });
+
+    // Function to get and display user's location
+    function getUserLocation() {
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+                
+                document.getElementById('myLocationLatitude').innerHTML = `<span class="font-medium">Latitude:</span> ${latitude}`;
+                document.getElementById('myLocationLongitude').innerHTML = `<span class="font-medium">Longitude:</span> ${longitude}`;
+                
+                // You can use a reverse geocoding service to get the location name
+                // For simplicity, we'll just display coordinates
+                document.getElementById('myLocation').innerHTML = `<span class="font-medium">Location:</span> ${latitude}, ${longitude}`;
+            }, function(error) {
+                console.error("Error getting location:", error);
+                document.getElementById('myLocation').innerHTML = `<span class="font-medium">Location:</span> Unable to retrieve location`;
+            });
+        } else {
+            console.log("Geolocation is not supported by this browser.");
+            document.getElementById('myLocation').innerHTML = `<span class="font-medium">Location:</span> Geolocation not supported`;
+        }
+    }
+
+    // Call getUserLocation when the page loads
+    document.addEventListener('DOMContentLoaded', getUserLocation);
 
 
-        // Call handleVideoDisplay when the page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            const ipCamUrl = ''; // Initialize with an empty string
-            handleVideoDisplay(ipCamUrl);
-        });
+    // ---------------------------------------------------------------------------------------
 
-        // Function to get and display user's location
-        function getUserLocation() {
-            if ("geolocation" in navigator) {
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    const latitude = position.coords.latitude;
-                    const longitude = position.coords.longitude;
-                    
-                    document.getElementById('myLocationLatitude').innerHTML = `<span class="font-medium">Latitude:</span> ${latitude}`;
-                    document.getElementById('myLocationLongitude').innerHTML = `<span class="font-medium">Longitude:</span> ${longitude}`;
-                    
-                    // You can use a reverse geocoding service to get the location name
-                    // For simplicity, we'll just display coordinates
-                    document.getElementById('myLocation').innerHTML = `<span class="font-medium">Location:</span> ${latitude}, ${longitude}`;
-                }, function(error) {
-                    console.error("Error getting location:", error);
-                    document.getElementById('myLocation').innerHTML = `<span class="font-medium">Location:</span> Unable to retrieve location`;
-                });
-            } else {
-                console.log("Geolocation is not supported by this browser.");
-                document.getElementById('myLocation').innerHTML = `<span class="font-medium">Location:</span> Geolocation not supported`;
+    function startPolling() {
+        setInterval(async () => {
+                try {
+                    const response = await fetch('/gps/get_location_data/');
+                    if (response.ok) {
+                        const data = await response.json();
+                        updateTable(data.location_data);
+                        
+                        // If there's location data available, we can also update our map
+                        if (data.location_data && data.location_data.length > 0) {
+                            const latestLocation = data.location_data[0]; // Assuming the latest is first
+                            if (latestLocation.latitude && latestLocation.longitude) {
+                                updateMapLocation(latestLocation.latitude, latestLocation.longitude);
+                            }
+                        }
+                        
+                        console.log('Data received:', data);
+                    } else {
+                        console.error('Polling Error:', await response.json());
+                    }
+                } catch (err) {
+                    console.error('Polling Fetch Error:', err);
+                }
+        },3000); // Poll every 3 seconds
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
             }
         }
+        return cookieValue;
+    }
 
-        // Call getUserLocation when the page loads
-        document.addEventListener('DOMContentLoaded', getUserLocation);
+    function updateTable(data) {
+        // Select the table body
+        const tableBody = document.querySelector('#location-data-table tbody');
+        // Clear the current table contents
+        tableBody.innerHTML = '';
+
+        // Check if the data array is empty
+        if (data.length === 0) {
+            // Create a new table row for the "No data available" message
+            const noDataRow = document.createElement('tr');
+            noDataRow.innerHTML = `
+                <td colspan="5" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-center">
+                    <div class="flex flex-col items-center justify-center py-6">
+                        <svg class="w-12 h-12 text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+                        </svg>
+                        <span class="font-medium">No data available</span>
+                    </div>
+                </td>
+            `;
+            // Append the "No data available" row to the table body
+            tableBody.appendChild(noDataRow);
+        } else {
+            // Iterate over each item in the data array
+            data.forEach(item => {
+                // Create a new table row
+                const row = document.createElement('tr');
+                row.className = 'sm:table-row flex flex-col mb-2 sm:mb-0';
+
+                // Format the row's inner HTML
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 sm:w-auto w-full">
+                        ${new Date(item.timestamp).toLocaleString()}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 sm:w-auto w-full">
+                        ${item.detected_count}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 sm:w-auto w-full">
+                        ${item.latitude}, ${item.longitude}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap sm:w-auto w-full">
+                        <button class="view-button bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-xs" data-id="${item.id}">
+                            Send
+                        </button>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap sm:w-auto w-full">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${item.status === 'Completed' ? 'bg-green-600 text-white' : 'bg-amber-600 text-white'}">
+                            ${item.status === 'Completed' ? 'Completed' : 'Pending'}
+                        </span>
+                    </td>
+                `;
+
+                // Append the row to the table body
+                tableBody.appendChild(row);
+            });
+
+            // Add event listeners to the "View" buttons
+            const viewButtons = document.querySelectorAll('.view-button');
+            viewButtons.forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const buttonElement = event.target.closest('.view-button');
+                    const recordId = buttonElement.getAttribute('data-id');
+                    const csrfToken = getCookie('csrftoken');
+                    // Send the ID to the backend using an AJAX request
+                    fetch(`/rescue/update_rescue_details/${recordId}/`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrfToken,
+                        },
+                        body: JSON.stringify({ id: recordId }),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Handle the response from the backend
+                        console.log('Success:', data);
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                    });
+                });
+            });
+            
+            // If there's at least one data point, use the first item's location 
+            // to update the map (assuming the first item is the most recent)
+            if (data.length > 0 && data[0].latitude && data[0].longitude) {
+                updateMapLocation(data[0].latitude, data[0].longitude);
+            }
+        }
+    }
+
+    // Start polling when the page loads
+    document.addEventListener('DOMContentLoaded', startPolling);
+
     </script>
 </body>
 </html>
-

@@ -15,6 +15,8 @@ def user_login(request):
             messages.success(request, "You have successfully logged in.")
             if user.is_admin:
                 return redirect('dashboard')  
+            elif user.role == 'volunteer':
+                return redirect('volunteer_dashboard')
             else:
                 return redirect('rescue_dashboard') 
         else:
