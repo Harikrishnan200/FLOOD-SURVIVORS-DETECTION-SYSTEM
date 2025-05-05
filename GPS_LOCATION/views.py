@@ -60,7 +60,7 @@ def receive_gps_data(request):
 
                     # If the distance is greater than 25 meters, save the new location
                     if distance > 0 and len(unique_person_ids) > 0:
-                        Location.objects.create(email=email, latitude=latitude, longitude=longitude, detected_count=len(unique_person_ids), is_first_location=False)
+                        Location.objects.create(email=email, latitude=latitude, longitude=longitude, detected_count=len(unique_person_ids), is_first_location=False, is_detected=True)
                         print(f"New location saved for {email} with distance: {distance}")
 
                         with unique_person_lock:
@@ -120,7 +120,7 @@ def get_location_data(request):
 
     if latest_location_true:
         location_false_data_list = Location.objects.filter(is_first_location=False, timestamp__gt=latest_location_true.timestamp).values(
-            'id','email', 'latitude', 'longitude', 'detected_count', 'is_first_location', 'timestamp', 'status'
+            'id','email', 'latitude', 'longitude', 'detected_count', 'is_first_location', 'timestamp', 'status', 'is_detected', 'is_send'
         )
 
     return JsonResponse({"location_data": list(location_false_data_list)[::-1]})

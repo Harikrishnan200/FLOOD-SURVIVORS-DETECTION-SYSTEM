@@ -32,7 +32,7 @@ model.conf = 0.5
 
 print("Current working directory:", os.getcwd())
 
-deep_sort_weights = r'C:\Users\harip\OneDrive\Desktop\FLOOD_SURVIVORS_PROJECT\venv\Scripts\FLOOD_SURVIVORS_DETECTION_SYSTEM\ADMIN_APP\deep_sort\deep\checkpoint\ckpt.t7'
+deep_sort_weights = r'C:\Users\harip\OneDrive\Desktop\FLOOD-SURVIVORS-DETECTION-SYSTEM\venv\Scripts\FLOOD_SURVIVORS_DETECTION_SYSTEM\ADMIN_APP\ckpt.t7'
 print("Path to ckpt.t7:", deep_sort_weights)
 
 

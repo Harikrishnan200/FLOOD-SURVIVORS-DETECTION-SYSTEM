@@ -3,8 +3,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import CustomUser
+from django.views.decorators.csrf import csrf_exempt
 
-
+@csrf_exempt
 def user_login(request):
     if request.method == "POST":
         email = request.POST.get('email')
@@ -13,10 +14,12 @@ def user_login(request):
         if user is not None:
             login(request, user)
             messages.success(request, "You have successfully logged in.")
-            if user.is_admin:
+            if user.is_admin and not user.is_super_admin:
                 return redirect('dashboard')  
             elif user.role == 'volunteer':
                 return redirect('volunteer_dashboard')
+            elif user.is_super_admin:
+                return redirect('super_admin_dashboard')
             else:
                 return redirect('rescue_dashboard') 
         else:
@@ -35,6 +38,7 @@ def user_register(request):
         password2 = request.POST.get('password2')
         country = request.POST.get('country')
         role = request.POST.get('role')
+        print("Role: ", role)
 
         if password1 != password2:
             messages.error(request, "Passwords do not match.")

@@ -36,6 +36,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         ('Admin', 'Admin'),
         ('User', 'User'),
         ('Volunteer', 'Volunteer'),
+        ('Super Admin', 'Super Admin'),
 
     ]
     
@@ -56,9 +57,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=50)
     email = models.EmailField(unique=True)
     country = models.CharField(max_length=50, choices=COUNTRY_CHOICES)
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='User')
+    role = models.CharField(max_length=11, choices=ROLE_CHOICES, default='User')
     location = models.CharField(max_length=100, default='unknown')
     is_admin = models.BooleanField(default=False)
+    is_super_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     reports = models.IntegerField(default=0)     # Number of reports made by the volunteer
@@ -79,7 +81,13 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
             self.is_admin = False
             self.is_staff = False
             self.location = 'unknown'  # Ensure location is 'unknown' for Users
+        elif self.role == 'Super Admin':
+            self.is_admin = True
+            self.is_staff = False
+            self.location = 'unknown'  # Ensure location is 'unknown' for Users
+            self.is_super_admin = True
         super().save(*args, **kwargs)
+
 
     def __str__(self):
         return self.email

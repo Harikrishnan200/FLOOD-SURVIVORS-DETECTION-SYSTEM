@@ -16,4 +16,6 @@ urlpatterns = [
     path('delete_rescue_team_member/<str:email>/', views.delete_rescue_team_member, name='delete_user'),
     path('update_rescue_team_table_content/', views.update_rescue_team_table_content, name='update_rescue_team_table_content'),
     path('admin_details/', views.admin_details, name='admin_details'),
+    path('super_admin_dashboard/', views.super_admin_dashboard, name='super_admin_dashboard'),
+
 ]

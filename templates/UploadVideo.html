@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FloodTrace - Upload Video</title>
+    <title>FloodResQ</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'CSS/style.css' %}">
@@ -62,7 +62,83 @@
     </style>
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 flex">
-    {% include 'Admin-navbar.html' %}
+    <div id="navbar" class="h-screen bg-[#FEFEFF] dark:bg-gray-800 transition-all duration-300 w-64 flex flex-col fixed left-0 top-0 z-50">
+        <div class="flex items-center justify-between p-4">
+            <h2 class="text-xl font-semibold dark:text-white">ResQVision</h2>
+            <button id="toggleSidebar" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                <i class="ri-menu-line text-xl dark:text-white"></i>
+            </button>
+        </div>
+    
+        <div class="flex-1 px-3 py-4 space-y-1">
+            <div class="relative">
+                <i class="ri-search-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                <input type="text" placeholder="Search" class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white">
+            </div>
+    
+            <div class="space-y-1">
+                <button id="dashboardDropdown" class="w-full flex items-center p-2 rounded-lg bg-primary-hover text-white dark:bg-gray-700 group">
+                    <i class="ri-dashboard-line text-xl mr-3"></i>
+                    <span>Dashboard</span>
+                    <i class="ri-arrow-down-s-line ml-auto transition-transform duration-300"></i>
+                </button>
+              
+                <div id="dashboardMenu" class="pl-6 space-y-1 overflow-hidden transition-all duration-300 max-h-0">
+                    <a href="{% url 'dashboard' %}" class="flex items-center p-2 rounded-lg hover:bg-light-violet dark:hover:bg-gray-700 group navbar-button">
+                        <i class="ri-bar-chart-box-line text-xl mr-3 text-primary dark:text-white"></i>
+                        <span class="text-primary dark:text-white">Real-Time</span>
+                    </a>
+                    <a href="{% url 'upload_video' %}" class="flex items-center p-2 rounded-lg hover:bg-light-violet dark:hover:bg-gray-700 group navbar-button">
+                        <i class="ri-video-upload-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white"></i>
+                        <span class="text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white">Upload Video</span>
+                    </a>
+                    <a href="{% url 'previous_data' %}" class="flex items-center p-2 rounded-lg hover:bg-light-violet dark:hover:bg-gray-700 group navbar-button">
+                        <i class="ri-history-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white"></i>
+                        <span class="text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white">Previous Data</span>
+                    </a>
+                    <a href="{% url 'add_users' %}" class="flex items-center p-2 rounded-lg hover:bg-light-violet dark:hover:bg-gray-700 group navbar-button">
+                        <i class="ri-user-add-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white"></i>
+                        <span class="text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white">Add Users</span>
+                    </a>
+                    <a href="{% url 'user_profile' %}" class="flex items-center p-2 rounded-lg hover:bg-light-violet dark:hover:bg-gray-700 group navbar-button">
+                        <i class="ri-user-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white"></i>
+                        <span class="text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white">User</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    
+        <div class="px-3 py-4 space-y-1">
+            <a href="#" class="flex items-center p-2 rounded-lg hover:bg-light-violet dark:hover:bg-gray-700 group navbar-button">
+                <i class="ri-notification-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white"></i>
+                <span class="text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white">Notifications</span>
+            </a>
+            <a href="#" class="flex items-center p-2 rounded-lg hover:bg-light-violet dark:hover:bg-gray-700 group navbar-button">
+                <i class="ri-question-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white"></i>
+                <span class="text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white">Support</span>
+            </a>
+            <a href="#" class="flex items-center p-2 rounded-lg hover:bg-light-violet dark:hover:bg-gray-700 group navbar-button">
+                <i class="ri-settings-line text-xl mr-3 text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white"></i>
+                <span class="text-gray-700 group-hover:text-primary dark:text-gray-200 dark:group-hover:text-white">Settings</span>
+            </a>
+            <a href="{% url 'logout' %}" class="flex items-center p-2 rounded-lg hover:bg-light-blue dark:hover:bg-gray-700 group">
+                <i class="ri-logout-box-line text-xl mr-3 text-gray-700 group-hover:text-red-600 dark:text-gray-200 dark:group-hover:text-red-500"></i>
+                <span class="text-gray-700 group-hover:text-red-600 dark:text-gray-200 dark:group-hover:text-red-500">Logout</span>
+            </a>
+        </div>
+    
+        <div class="p-4 mt-auto border-t border-gray-200 dark:border-gray-700">
+            <div class="flex items-center">
+                <div class="w-10 h-10 rounded-full bg-violet-600 flex items-center justify-center text-white font-bold text-sm">
+                    {{ request.user.first_name|first }}
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm font-medium text-gray-700 dark:text-gray-200">{{request.user.first_name}}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">{{request.user.email}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="flex-1 ml-64 transition-all duration-300">
         {% include 'Admin-header.html' %}
@@ -239,8 +315,66 @@
             </div>
         </main>
     </div>
-    <script src="{% static 'JS/scripts.js' %}"></script>
     <script>
+
+const navbar = document.getElementById('navbar');
+const toggleSidebar = document.getElementById('toggleSidebar');
+const menuToggle = document.getElementById('menuToggle');
+const toggleTheme = document.getElementById('toggleTheme');
+const html = document.documentElement;
+const mainContent = document.querySelector('.ml-64');
+
+toggleSidebar.addEventListener('click', () => {
+    navbar.classList.toggle('w-20');
+    navbar.classList.toggle('w-64');
+    mainContent.classList.toggle('ml-20');
+    mainContent.classList.toggle('ml-64');
+    const isCollapsed = navbar.classList.contains('w-20');
+    document.querySelectorAll('#navbar span, #navbar h2, #navbar .ml-3').forEach(el => {
+        el.style.display = isCollapsed ? 'none' : 'block';
+    });
+    document.querySelector('#navbar input').placeholder = isCollapsed ? '' : 'Search';
+});
+
+menuToggle.addEventListener('click', () => {
+    navbar.classList.toggle('-translate-x-full');
+});
+
+toggleTheme.addEventListener('click', () => {
+    html.classList.toggle('dark');
+    const isDark = html.classList.contains('dark');
+    toggleTheme.innerHTML = isDark ? '<i class="ri-moon-line text-xl text-white"></i>' : '<i class="ri-sun-line text-xl"></i>';
+    localStorage.theme = isDark ? 'dark' : 'light';
+});
+
+// Check for saved theme preference or use system preference
+if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    html.classList.add('dark');
+} else {
+    html.classList.remove('dark');
+}
+
+// Update theme icon on load
+const isDark = html.classList.contains('dark');
+toggleTheme.innerHTML = isDark ? '<i class="ri-moon-line text-xl text-white"></i>' : '<i class="ri-sun-line text-xl"></i>';
+
+document.addEventListener('DOMContentLoaded', function() {
+        const dashboardDropdown = document.getElementById('dashboardDropdown');
+        const dashboardMenu = document.getElementById('dashboardMenu');
+        const arrowIcon = dashboardDropdown.querySelector('.ri-arrow-down-s-line');
+        let isOpen = false;
+
+        dashboardDropdown.addEventListener('click', function() {
+            isOpen = !isOpen;
+            if (isOpen) {
+                dashboardMenu.style.maxHeight = dashboardMenu.scrollHeight + 'px';
+                arrowIcon.style.transform = 'rotate(180deg)';
+            } else {
+                dashboardMenu.style.maxHeight = '0';
+                arrowIcon.style.transform = 'rotate(0)';
+            }
+        });
+    });
     
         const uploadArea = document.querySelector('.upload-area');
         const fileInput = document.getElementById('fileInput');

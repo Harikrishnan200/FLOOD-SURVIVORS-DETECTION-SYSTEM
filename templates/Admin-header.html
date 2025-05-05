@@ -12,7 +12,10 @@
                     <i class="ri-sun-line text-xl dark:text-white"></i>
                 </button>
                 <button class="text-gray-600 dark:text-gray-300 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"><i class="ri-notification-line text-xl"></i></button>
-                <img src="https://via.placeholder.com/40" alt="User avatar" class="w-8 h-8 rounded-full ml-4">
+                <div class="w-10 h-10 rounded-full bg-violet-600 flex items-center justify-center text-white font-bold text-sm">
+                    {{ request.user.first_name|first }}
+                </div>
+                
             </div>
         </div>
     </div>
